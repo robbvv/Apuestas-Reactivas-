@@ -12,6 +12,7 @@ const EventForm = () => {
   const [newEventSport, setNewEventSport] = useState<string>("");
   const [newEventLocation, setNewEventLocation] = useState<string>("");
   const [newEventMinimumBet, setNewEventMinimumBet] = useState<number>(0);
+  const [newEventDate, setNewEventDate] = useState<string>("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +24,7 @@ const EventForm = () => {
       description: newEventDescription,
       sport: newEventSport,
       location: newEventLocation,
-      date: new Date().toISOString(), 
+      date: new Date(newEventDate).toISOString(), 
       active: true,
       createdAt: new Date().toISOString(),
       updatedAt: null,
@@ -42,6 +43,7 @@ const EventForm = () => {
     setNewEventSport("");
     setNewEventLocation("");
     setNewEventMinimumBet(0);
+    setNewEventDate("");
   };
 
   const handleEventTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,6 +72,10 @@ const EventForm = () => {
 
   const handleEventMinimumBetChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setNewEventMinimumBet(Number(event.target.value));
+  };
+
+  const handleEventDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setNewEventDate(event.target.value);
   };
 
   return (
@@ -112,14 +118,18 @@ const EventForm = () => {
           placeholder="Type the event location"
           onChange={handleEventLocationChange}
           />
+        Date of the event: <input
+          type="date"
+          value={newEventDate}
+          onChange={handleEventDateChange}
+          required
+          />
         Minimum Bet: <input
           type="number"
           value={newEventMinimumBet}
           placeholder="Type the minimum bet"
           onChange={handleEventMinimumBetChange}
           />
-
-
         <button type="submit">Publish event</button>
       </form>
     </div>

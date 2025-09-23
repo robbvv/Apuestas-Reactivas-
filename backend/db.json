@@ -84,6 +84,23 @@
       "minBet": 7000,
       "pool": 0,
       "betsCount": 0
+    },
+    {
+      "id": "2dc3",
+      "title": "Nuevo evento nuevo",
+      "organizer": "yoo",
+      "email": "yo@gmail.com",
+      "description": "nuevo eventoo nuevo",
+      "sport": "Boxeo",
+      "location": "850",
+      "date": "2026-01-12T00:00:00.000Z",
+      "active": true,
+      "createdAt": "2025-09-23T21:57:13.338Z",
+      "updatedAt": null,
+      "stars": 0,
+      "minBet": 20000,
+      "pool": 0,
+      "betsCount": 0
     }
   ]
 }
