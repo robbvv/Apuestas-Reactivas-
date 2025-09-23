@@ -1,62 +1,132 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import type { PostData } from "../types/posts";
-import Post from "./Post";
-import "../styles/event-form.css"
-
-const baseUrl = "";
-
-const form = () => (
-  <div className="main-container">
-    <form className="form-container" onSubmit={addThread}>
-      Title: <input
-        type="text"
-        value={newEventTitle}
-        placeholder="Type the title"
-        onChange={handleEventTitleChange}
-      />
-      Organizer: <input
-        type="text"
-        value={newEventOrganizer}
-        placeholder="Type the organizer's name"
-        onChange={handleEventOrganizerChange}
-      />
-      Email: <input
-        type="text"
-        value={newEventEmail}
-        placeholder="Type the organizer's email"
-        onChange={handleEventEmailChange}
-        />
-      Description: <input
-        type="text"
-        value={newEventDescription}
-        placeholder="Type the description"
-        onChange={handleEventDescriptionChange}
-        />
-      Sport: <input
-        type="text"
-        value={newEventSport}
-        placeholder="Type the event sport"
-        onChange={handleEventSportChange}
-        />
-      Location: <input
-        type="text"
-        value={newEventLocation}
-        placeholder="Type the event location"
-        onChange={handleEventLocationChange}
-        />
-      Minimum Bet: <input
-        type="number"
-        value={newEventMinimumBet}
-        placeholder="Type the minimum bet"
-        onChange={handleEventMinimumBetChange}
-        />
+import "../styles/event-form.css";
+import eventService from "../services/events";
 
 
-      <button type="submit">Publish thread</button>
-    </form>
-  </div>
-)
+const EventForm = () => {
+  const [newEventTitle, setNewEventTitle] = useState<string>("");
+  const [newEventOrganizer, setNewEventOrganizer] = useState<string>("");
+  const [newEventEmail, setNewEventEmail] = useState<string>("");
+  const [newEventDescription, setNewEventDescription] = useState<string>("");
+  const [newEventSport, setNewEventSport] = useState<string>("");
+  const [newEventLocation, setNewEventLocation] = useState<string>("");
+  const [newEventMinimumBet, setNewEventMinimumBet] = useState<number>(0);
 
-const starButton = (e_id: number) => <><button onClick={() => addStar(e_id)</>
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const newEvent = {
+      title: newEventTitle,
+      organizer: newEventOrganizer,
+      email: newEventEmail,
+      description: newEventDescription,
+      sport: newEventSport,
+      location: newEventLocation,
+      date: new Date().toISOString(), 
+      active: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: null,
+      stars: 0,
+      minBet: newEventMinimumBet,
+      pool: 0,
+      betsCount: 0,
+    };
+
+    eventService.createEvent(newEvent);
+
+    setNewEventTitle("");
+    setNewEventOrganizer("");
+    setNewEventEmail("");
+    setNewEventDescription("");
+    setNewEventSport("");
+    setNewEventLocation("");
+    setNewEventMinimumBet(0);
+  };
+
+  const handleEventTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setNewEventTitle(event.target.value);
+  };
+
+  const handleEventOrganizerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setNewEventOrganizer(event.target.value);
+  };
+
+  const handleEventEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setNewEventEmail(event.target.value);
+  };
+
+  const handleEventDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setNewEventDescription(event.target.value);
+  };
+
+  const handleEventSportChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setNewEventSport(event.target.value);
+  };
+
+  const handleEventLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setNewEventLocation(event.target.value);
+  };
+
+  const handleEventMinimumBetChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setNewEventMinimumBet(Number(event.target.value));
+  };
+
+  return (
+    <div className="main-container">
+      <h1>Crear un nuevo evento</h1>
+      <form className="form-container" onSubmit={handleSubmit}>
+        Title: <input
+          type="text"
+          value={newEventTitle}
+          placeholder="Type the title"
+          onChange={handleEventTitleChange}
+        />
+        Organizer: <input
+          type="text"
+          value={newEventOrganizer}
+          placeholder="Type the organizer's name"
+          onChange={handleEventOrganizerChange}
+        />
+        Email: <input
+          type="text"
+          value={newEventEmail}
+          placeholder="Type the organizer's email"
+          onChange={handleEventEmailChange}
+          />
+        Description: <input
+          type="text"
+          value={newEventDescription}
+          placeholder="Type the description"
+          onChange={handleEventDescriptionChange}
+          />
+        Sport: <input
+          type="text"
+          value={newEventSport}
+          placeholder="Type the event sport"
+          onChange={handleEventSportChange}
+          />
+        Location: <input
+          type="text"
+          value={newEventLocation}
+          placeholder="Type the event location"
+          onChange={handleEventLocationChange}
+          />
+        Minimum Bet: <input
+          type="number"
+          value={newEventMinimumBet}
+          placeholder="Type the minimum bet"
+          onChange={handleEventMinimumBetChange}
+          />
+
+
+        <button type="submit">Publish event</button>
+      </form>
+    </div>
+  )
 }
+
+export default EventForm;
+
+//const starButton = (e_id: number) => <><button onClick={() => addStar(e_id)</>
+//}

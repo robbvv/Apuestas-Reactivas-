@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import eventService from "../services/events";
 import type { EventData } from '../types/event';
+import Event from './Event';
+import "../styles/event-list.css";
 
 const EventList = () => {
 
@@ -14,9 +16,13 @@ const EventList = () => {
 	}, []);
 
 	return (
-		<div>
-			<h1>Listado de Eventos Reactivos</h1>
-			{events.}
+		<div className="event-list-container">
+			<h1>Listado de Eventos</h1>
+			{events.map((event) => (
+				<Event key={event.id} event={event} />
+			))}
 		</div>
 	)
 }
+
+export default EventList;

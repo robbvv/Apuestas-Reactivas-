@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Home from "./components/Home";
+//import Home from "./components/Home";
 import EventForm from "./components/EventForm";
-import EventList from "./components/SingleEvent";
+import EventList from "./components/EventList";
 import './App.css';
 
 const App = () => {
@@ -11,12 +11,12 @@ const App = () => {
       <Router>
         <div>
           <Link style={padding} to="/">Home</Link>
-          <Link style={padding} to="/event-form">Event List</Link>
-          <Link style={padding} to="/event-list">Event Form</Link>
+          <Link style={padding} to="/event-list">Ver eventos</Link>
+          <Link style={padding} to="/event-form">Nuevo evento</Link>
         </div>
 
         <Routes>
-          <Route path="/" element={<Home />} />
+          
           <Route
             path="/event-form"
             element={ <EventForm /> }
