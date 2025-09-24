@@ -7,7 +7,6 @@ export type EventData = {
     sport: string;
     location: string;
     date: string;
-    active: boolean;
     createdAt: string;
     updatedAt: string | null;
     stars: number;

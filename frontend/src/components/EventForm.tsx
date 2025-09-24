@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState } from "react";
+//import axios from "axios";
 import "../styles/event-form.css";
 import eventService from "../services/events";
 
@@ -24,8 +24,7 @@ const EventForm = () => {
       description: newEventDescription,
       sport: newEventSport,
       location: newEventLocation,
-      date: new Date(newEventDate).toISOString(), 
-      active: true,
+      date: new Date(newEventDate).toISOString(),
       createdAt: new Date().toISOString(),
       updatedAt: null,
       stars: 0,
@@ -58,7 +57,7 @@ const EventForm = () => {
       setNewEventEmail(event.target.value);
   };
 
-  const handleEventDescriptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEventDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
       setNewEventDescription(event.target.value);
   };
 
@@ -82,54 +81,63 @@ const EventForm = () => {
     <div className="main-container">
       <h1>Crear un nuevo evento</h1>
       <form className="form-container" onSubmit={handleSubmit}>
-        Title: <input
+        <label className="form-inline">Title: <input
           type="text"
           value={newEventTitle}
           placeholder="Type the title"
           onChange={handleEventTitleChange}
         />
-        Organizer: <input
+        </label>
+        <label className="form-inline">Organizer: <input
           type="text"
           value={newEventOrganizer}
           placeholder="Type the organizer's name"
           onChange={handleEventOrganizerChange}
         />
-        Email: <input
+        </label>
+        <label className="form-inline">Email: <input
           type="text"
           value={newEventEmail}
           placeholder="Type the organizer's email"
           onChange={handleEventEmailChange}
           />
-        Description: <input
-          type="text"
+        </label>
+        <label>Description:</label>
+        <textarea
           value={newEventDescription}
-          placeholder="Type the description"
+          placeholder="Describe the event"
+          rows={10}
+          cols={40}
           onChange={handleEventDescriptionChange}
           />
-        Sport: <input
+        <label className="form-inline">Sport: <input
           type="text"
           value={newEventSport}
           placeholder="Type the event sport"
           onChange={handleEventSportChange}
           />
-        Location: <input
+        </label>
+        <label className="form-inline">Location: <input
           type="text"
           value={newEventLocation}
           placeholder="Type the event location"
           onChange={handleEventLocationChange}
           />
-        Date of the event: <input
+        </label>
+        <label className="form-inline">Date of the event: <input
           type="date"
           value={newEventDate}
           onChange={handleEventDateChange}
           required
           />
-        Minimum Bet: <input
+        </label>
+        <label className="form-inline">Minimum Bet: <input
           type="number"
           value={newEventMinimumBet}
           placeholder="Type the minimum bet"
           onChange={handleEventMinimumBetChange}
           />
+        </label>
         <button type="submit">Publish event</button>
       </form>
     </div>
