@@ -20,6 +20,8 @@ interface IBet {
   pool: number;
   betsCount: number;
   options: IOption[];
+  owner: mongoose.Types.ObjectId;
+  participants: mongoose.Types.ObjectId[];
 }
 
 const optionSchema = new Schema<IOption>({
@@ -42,6 +44,17 @@ const betSchema = new Schema<IBet>({
   pool: { type: Number, },
   betsCount: { type: Number, },
   options: { type: [optionSchema], required: true },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
+  participants: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  
 });
 
 betSchema.set("toJSON", {

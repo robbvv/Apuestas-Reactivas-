@@ -14,7 +14,7 @@ router.get("/", async (request, response) => {
 
 router.get("/:id", async (request, response, next) => {
   const id = request.params.id;
-  const bet = Bet.findById(id);
+  const bet = Bet.findById(id).populate("owner", { username: 1 });
   if (bet) {
     response.json(bet);
   } else {
@@ -45,7 +45,7 @@ router.post("/", withUser, async (request, response, next) => {
 
     const bet = {
       title: body.title,
-      organizer: body.organizer,
+      organizer: body.organizer || user.username,
       email: body.email || null,
       description: body.description,
       sport: body.sport,
@@ -57,7 +57,9 @@ router.post("/", withUser, async (request, response, next) => {
       minBet: body.minBet,
       pool: body.pool,
       betsCount: body.betsCount,
-      options: options
+      options: options,
+      owner: user.id,
+      participants: [],
     };
 
     const savedBet = await new Bet(bet).save();
@@ -122,7 +124,17 @@ router.post("/:id", withUser, async (request, response, next) => {
 
     bet.pool = bet.pool + body.amount
     bet.betsCount = bet.betsCount + 1
+    bet.participants = bet.participants.concat(user.id)
     await bet.save()
+
+    response.status(201).json({
+      betId: bet.id,
+      userId: user.id,
+      option: body.option,
+      amount: body.amount,
+      pool: bet.pool,
+      betsCount: bet.betsCount
+    });
   }
 })
 

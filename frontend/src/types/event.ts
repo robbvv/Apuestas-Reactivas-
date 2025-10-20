@@ -1,3 +1,5 @@
+import type { UserData } from "./user";
+
 export type EventOption = {
     name: string;
     payout: number;
@@ -19,4 +21,6 @@ export type EventData = {
     pool: number;
     betsCount: number;
     options: EventOption[];
+    owner: Partial<UserData>; // id, username por ahora
+    participants: string[]; // ids
 }

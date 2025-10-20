@@ -44,7 +44,7 @@ router.post("/", async (request, response) => {
 
 router.get("/me", withUser, async (request, response, next) => {
   const body = request.body;
-  const user = await User.findById(request.userId);
+  const user = await User.findById(request.userId).populate("ownBets");
   response.status(200).json(user);
 });
 

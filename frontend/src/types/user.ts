@@ -1,3 +1,5 @@
+import type { EventData } from "./event";
+
 export type UserBet = {
   betId: string;
   option: string;  
@@ -10,5 +12,5 @@ export type UserData = {
   username: string;
   email: string;
   bets: UserBet[];
-  ownBets: string[];
+  ownBets: Partial<EventData>[];
 };

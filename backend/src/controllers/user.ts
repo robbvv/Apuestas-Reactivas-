@@ -5,7 +5,7 @@ import User from "../models/user";
 const router = express.Router();
 
 router.get("/", async (request, response) => {
-  const users = await User.find({}).populate("bets").populate("ownBets");
+  const users = await User.find({}).populate("ownBets");
   response.json(users);
 });
 
@@ -38,7 +38,7 @@ router.post("/", async (request, response, next) => {
 router.get("/:id", async (request, response, next) => {
 	try {
 		const id = request.params.id;
-		const user = await User.findById(id).populate("bets").populate("ownBets");
+		const user = await User.findById(id).populate("ownBets");
 		response.json(user);
 	} catch (error) {
 		next(error);

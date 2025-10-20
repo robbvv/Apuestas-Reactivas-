@@ -4,24 +4,24 @@ import axiosSecure from "../utils/axiosSecure";
 
 const baseUrl = "/api/bets";
 
-const getAllEvents = (): Promise<EventData[]> => {
-    const request = axios.get(baseUrl);
-    return request.then((response) => response.data);
+const getAllEvents = async (): Promise<EventData[]> => {
+    const request = await axios.get(baseUrl);
+    return request.data;
 };
 
-const getById = (id: number): Promise<EventData> => {
-    const request = axios.get(`${baseUrl}/${id}`);
-    return request.then((response) => response.data);
+const getById = async (id: number): Promise<EventData> => {
+    const request = await axios.get(`${baseUrl}/${id}`);
+    return request.data;
 };
 
-const createEvent = (event: Omit<EventData, "id">): Promise<EventData> => {
-    const request = axiosSecure.post(baseUrl, event);
-    return request.then((response) => response.data);
+const createEvent = async (event: Omit<EventData, "id">): Promise<EventData> => {
+    const request = await axiosSecure.post(baseUrl, event);
+    return request.data;
 };
 
-const betEvent = (id: String, option: String, amount: number) => {
-    const request = axiosSecure.post(`${baseUrl}/${id}`, {option: option, amount: amount});
-    return request.then((response) => response.data);
+const betEvent = async (id: String, option: String, amount: number) => {
+    const request = await axiosSecure.post(`${baseUrl}/${id}`, {option: option, amount: amount});
+    return request.data;
 }
 
 export default {

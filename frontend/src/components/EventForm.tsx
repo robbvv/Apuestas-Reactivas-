@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useState , useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import type { UserData } from "../types/user";
+import type { EventData } from "../types/event";
 //import axios from "axios";
 import "../styles/event-form.css";
+import userService from "../services/user"
 import eventService from "../services/events";
 
 
@@ -17,10 +21,33 @@ const EventForm = () => {
   const [newOptionName, setNewOptionName] = useState("");
   const [newOptionPayout, setNewOptionPayout] = useState<number>(0);
 
+  const [user, setUser] = useState<UserData | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const res = await userService.getUser();
+        setUser(res);
+      } catch (error) {
+        navigate("/login");
+      }
+    }
+    init();
+  }, [])
+
+  if (!user) return (<p>LOADING USER</p>)
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newEvent = {
+    const eventOwner: Partial<UserData> = {
+      id: user.id,
+      username: user.username,
+    }
+
+    const newEvent: Omit<EventData, "id"> = {
+      owner: eventOwner,
       title: newEventTitle,
       organizer: newEventOrganizer,
       email: newEventEmail,
@@ -34,7 +61,8 @@ const EventForm = () => {
       minBet: newEventMinimumBet,
       pool: 0,
       betsCount: 0,
-      options: newOptions
+      options: newOptions,
+      participants: [],
     };
 
     eventService.createEvent(newEvent);
@@ -156,7 +184,6 @@ const EventForm = () => {
           onChange={handleEventMinimumBetChange}
           />
         </label>
-        <button type="submit">Publish event</button>
         <div className="options-container">
           <h3>Bet options</h3>
           <div className="form-inline">
@@ -173,6 +200,7 @@ const EventForm = () => {
             ))}
           </ul>
         </div>
+        <button type="submit">Publish event</button>
       </form>
     </div>
   )
