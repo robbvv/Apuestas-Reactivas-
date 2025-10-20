@@ -1,8 +1,7 @@
 import type { UserData } from "../types/user";
 import userService from "../services/user"
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 //falta css
 const UserPage = () => {
