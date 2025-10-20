@@ -1,4 +1,4 @@
-# Proyecto: Apuestas Reactivas
+# Proyecto: Apuestas Reactivas  (Reactive Bets)
 
 ## Integrantes:
 - Agustín Andrés Verdugo Bustos
