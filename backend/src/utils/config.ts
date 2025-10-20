@@ -2,7 +2,7 @@ import dotenv from "dotenv"
 
 dotenv.config();
 
-const PORT = process.env.PORT || "8000";
+const PORT = process.env.PORT || "3001";
 const HOST = process.env.HOST || "localhost";
 
 const MONGODB_URI =
