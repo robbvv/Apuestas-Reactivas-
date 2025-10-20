@@ -35,6 +35,10 @@ const App = () => {
           <Route
             path= "/me"
             element={ <UserPage /> }
+          />
+          <Route
+            path="/event-form"
+            element={ <EventForm /> }
           />          
         </Routes>
 

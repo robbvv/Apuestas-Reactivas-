@@ -5,8 +5,13 @@ import loginRouter from "./controllers/login"
 import usersRouter from "./controllers/user"
 import middleware from "./utils/middleware";
 import betsRouter from "./controllers/bet"
+import cookieParser from "cookie-parser";
 
 const app = express();
+
+app.use(express.json());
+app.use(cookieParser());
+app.use(middleware.requestLogger);
 
 app.use("/api/login", loginRouter);
 app.use("/api/users", usersRouter);
