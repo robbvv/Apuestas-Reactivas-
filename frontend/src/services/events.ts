@@ -9,7 +9,7 @@ const getAllEvents = async (): Promise<EventData[]> => {
     return request.data;
 };
 
-const getById = async (id: number): Promise<EventData> => {
+const getById = async (id: string): Promise<EventData> => {
     const request = await axios.get(`${baseUrl}/${id}`);
     return request.data;
 };
@@ -19,7 +19,7 @@ const createEvent = async (event: Omit<EventData, "id">): Promise<EventData> => 
     return request.data;
 };
 
-const betEvent = async (id: String, option: String, amount: number) => {
+const betEvent = async (id: string, option: string, amount: number) => {
     const request = await axiosSecure.post(`${baseUrl}/${id}`, {option: option, amount: amount});
     return request.data;
 }

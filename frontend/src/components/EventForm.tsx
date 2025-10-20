@@ -19,7 +19,7 @@ const EventForm = () => {
   const [newEventDate, setNewEventDate] = useState<string>("");
   const [newOptions, setNewOptions] = useState<{ name: string; payout: number }[]>([]);
   const [newOptionName, setNewOptionName] = useState("");
-  const [newOptionPayout, setNewOptionPayout] = useState<number>(0);
+  const [newOptionPayout, setNewOptionPayout] = useState<number>(1);
 
   const [user, setUser] = useState<UserData | null>(null);
   const navigate = useNavigate();
@@ -188,7 +188,7 @@ const EventForm = () => {
           <h3>Bet options</h3>
           <div className="form-inline">
             <input type="text" value={newOptionName} onChange={(e) => setNewOptionName(e.target.value)} placeholder="Option name" />
-            <input type="number" value={newOptionPayout} onChange={(e) => setNewOptionPayout(Number(e.target.value))} placeholder="Payout" />
+            <input type="number" min={1} step={0.1} value={newOptionPayout} onChange={(e) => setNewOptionPayout(Number(e.target.value))} placeholder="Payout" />
             <button type="button" onClick={handleAddOption}>Add option</button>
           </div>
           <ul>

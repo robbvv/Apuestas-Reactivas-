@@ -14,7 +14,7 @@ router.get("/", async (request, response) => {
 
 router.get("/:id", async (request, response, next) => {
   const id = request.params.id;
-  const bet = Bet.findById(id).populate("owner", { username: 1 });
+  const bet = await Bet.findById(id).populate("owner", { username: 1 });
   if (bet) {
     response.json(bet);
   } else {

@@ -13,7 +13,7 @@ const EventPage = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       if (!id) return;
-      const data = await eventService.getById(Number(id));
+      const data = await eventService.getById(id);
       setEvent(data);
     };
     fetchEvent();

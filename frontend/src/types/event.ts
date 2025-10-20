@@ -6,7 +6,7 @@ export type EventOption = {
 }
 
 export type EventData = {
-    id: number;
+    id: string;
     title: string;
     organizer: string;
     email: string;
