@@ -52,3 +52,7 @@
     box-sizing: border-box;
     color: #333;
 }
+.event-link {
+  text-decoration: none;
+  color: inherit;
+}

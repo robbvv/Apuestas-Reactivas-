@@ -1,3 +1,8 @@
+export type EventOption = {
+    name: string;
+    payout: number;
+}
+
 export type EventData = {
     id: number;
     title: string;
@@ -13,4 +18,5 @@ export type EventData = {
     minBet: number;
     pool: number;
     betsCount: number;
+    options: EventOption[];
 }

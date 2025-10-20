@@ -13,6 +13,9 @@ const EventForm = () => {
   const [newEventLocation, setNewEventLocation] = useState<string>("");
   const [newEventMinimumBet, setNewEventMinimumBet] = useState<number>(0);
   const [newEventDate, setNewEventDate] = useState<string>("");
+  const [newOptions, setNewOptions] = useState<{ name: string; payout: number }[]>([]);
+  const [newOptionName, setNewOptionName] = useState("");
+  const [newOptionPayout, setNewOptionPayout] = useState<number>(0);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,6 +34,7 @@ const EventForm = () => {
       minBet: newEventMinimumBet,
       pool: 0,
       betsCount: 0,
+      options: newOptions
     };
 
     eventService.createEvent(newEvent);
@@ -43,6 +47,9 @@ const EventForm = () => {
     setNewEventLocation("");
     setNewEventMinimumBet(0);
     setNewEventDate("");
+    setNewOptions([]);
+    setNewOptionName("");
+    setNewOptionPayout(0);
   };
 
   const handleEventTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,6 +82,17 @@ const EventForm = () => {
 
   const handleEventDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setNewEventDate(event.target.value);
+  };
+
+  const handleAddOption = () => {
+    if (!newOptionName || newOptionPayout <= 0) return;
+    setNewOptions([...newOptions, { name: newOptionName, payout: newOptionPayout }]);
+    setNewOptionName("");
+    setNewOptionPayout(0);
+  };
+
+  const handleRemoveOption = (index: number) => {
+    setNewOptions(newOptions.filter((_, i) => i !== index));
   };
 
   return (
@@ -139,6 +157,22 @@ const EventForm = () => {
           />
         </label>
         <button type="submit">Publish event</button>
+        <div className="options-container">
+          <h3>Bet options</h3>
+          <div className="form-inline">
+            <input type="text" value={newOptionName} onChange={(e) => setNewOptionName(e.target.value)} placeholder="Option name" />
+            <input type="number" value={newOptionPayout} onChange={(e) => setNewOptionPayout(Number(e.target.value))} placeholder="Payout" />
+            <button type="button" onClick={handleAddOption}>Add option</button>
+          </div>
+          <ul>
+            {newOptions.map((opt, index) => (
+              <li key={index}>
+                {opt.name} - {opt.payout} 
+                <button type="button" onClick={() => handleRemoveOption(index)}>Remove</button>
+              </li>
+            ))}
+          </ul>
+        </div>
       </form>
     </div>
   )

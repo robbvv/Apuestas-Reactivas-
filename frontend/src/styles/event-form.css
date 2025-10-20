@@ -131,3 +131,60 @@ h1 {
   align-items: center;
   gap: 0.5rem;
 }
+
+/* Contenedor de opciones */
+.options-container {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+}
+
+/* Inputs y botón en línea */
+.options-container .form-inline input[type="text"],
+.options-container .form-inline input[type="number"] {
+    flex: 1;
+}
+
+.options-container .form-inline button {
+    padding: 6px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.options-container .form-inline button:hover {
+    background-color: #0069d9;
+}
+
+/* Lista de opciones agregadas */
+.options-container ul {
+    padding-left: 0;
+    margin-top: 10px;
+    list-style: none;
+}
+
+.options-container li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+}
+
+.options-container li button {
+    padding: 3px 6px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.options-container li button:hover {
+    background-color: #c82333;
+}

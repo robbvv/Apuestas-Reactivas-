@@ -1,0 +1,108 @@
+/* En frontend/src/components/EventPage.css */
+
+/* Contenedor principal del evento */
+.event-item {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border: 1px solid #e9ecef;
+}
+
+/* Título del evento */
+.event-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+/* Contenedores de detalles y estadísticas */
+.event-details,
+.event-details2,
+.event-stats,
+.event-stats2 {
+    color: #6c757d;
+    font-size: 0.95rem;
+    text-align: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+/* Quitar el borde inferior del último elemento */
+.event-stats2 {
+    border-bottom: none;
+    margin-bottom: 1.5rem;
+}
+
+
+/* Descripción del evento */
+.event-description {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #495057;
+    text-align: justify;
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+/* Contenedor del formulario de apuesta */
+.event-bet-form-container {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #e9ecef;
+}
+
+/* Formulario de apuesta */
+.event-bet-form {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* Input numérico para la apuesta */
+.event-bet-form input[type="number"] {
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    font-size: 1rem;
+    width: 120px; /* Ancho fijo para el input */
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.event-bet-form input[type="number"]:focus {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Botón para apostar */
+.event-bet-form button {
+    padding: 0.8rem 1.8rem;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.event-bet-form button:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+}
+
+.event-bet-form button:active {
+    transform: translateY(0);
+}
+

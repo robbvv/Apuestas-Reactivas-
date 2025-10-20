@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import eventService from "../services/events";
+import { Link } from 'react-router-dom';
 import type { EventData } from '../types/event';
 import Event from './Event';
 import "../styles/event-list.css";
@@ -25,20 +26,24 @@ const EventList = () => {
   );
 
 	return (
-		<div className="event-list-container">
-			<h1>Listado de Eventos</h1>
+		<div>
+			<h2>Listado de Eventos</h2>
 			<input
-				className="event-search"
-        type="text"
-        placeholder="Buscar por título..."
-        value={search}
-        onChange={handleSearchChange}
-      />
-			{filteredEvents.map((event) => (
-				<Event key={event.id} event={event} />
-			))}
+				type="text"
+				placeholder="Buscar por título..."
+				value={search}
+				onChange={handleSearchChange}
+			/>
+			<div>
+				{filteredEvents.map((event) => (
+					<>
+						<Event key={event.id} event={event} />
+						<Link to={`/event-page/${event.id}`} key={event.id} className="event-link">More info</Link>
+					</>
+				))}
+			</div>
 		</div>
-	)
+	);
 }
 
 export default EventList;
