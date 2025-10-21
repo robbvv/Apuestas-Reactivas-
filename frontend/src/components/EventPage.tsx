@@ -15,18 +15,20 @@ const EventPage = () => {
       if (!id) return;
       const data = await eventService.getById(id);
       setEvent(data);
+      setNewBetAmount(data.minBet)
     };
     fetchEvent();
   }, [id])
 
   if (!event) return (<p>LOADING USER</p>)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!id) return;
-    eventService.betEvent(id, newBetOption, newBetAmount);
+    const updatedEvent = await eventService.betEvent(id, newBetOption, newBetAmount);
+    setEvent(updatedEvent);
     setNewBetOption("");
-    setNewBetAmount(0);
+    setNewBetAmount(event.minBet);
   };
 
   const handleBetOptionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {

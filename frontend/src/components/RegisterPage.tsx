@@ -7,8 +7,30 @@ const RegisterPage = () => {
   const [newEmail, setNewEmail] = useState<string>("")
   const [newPassword, setNewPassword] = useState<string>("")
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
+    if (!newUsername.trim() || !newEmail.trim() || !newPassword.trim()) {
+      setErrorMessage("All fields are required.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail)) {
+      setErrorMessage("Email is not valid.");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setErrorMessage("Password must be at least 6 characters long");
+      return;
+    }
     
     const newUser = {
       username: newUsername,
@@ -16,11 +38,20 @@ const RegisterPage = () => {
       password: newPassword
     };
 
-    userService.createUser(newUser);
+    try {
+      await userService.createUser(newUser);
 
-    setNewUsername("");
-    setNewEmail("");
-    setNewPassword("");
+      setSuccessMessage("User created!");
+      setNewUsername("");
+      setNewEmail("");
+      setNewPassword("");
+    } catch (err: any) {
+      if (err.response?.data?.error) {
+        setErrorMessage(err.response.data.error);
+      } else {
+        setErrorMessage("An unexpected error occurred.");
+      }
+    }
   }
 
   const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,6 +69,8 @@ const RegisterPage = () => {
   return (
     <div className="main-container">
       <h1>Sign up</h1>
+      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+      {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
       <form className="form-container" onSubmit={handleSubmit}>
         <label className="form-inline">Username: <input
           type="text"

@@ -27,7 +27,7 @@ const EventList = () => {
 
 	return (
 		<div>
-			<h2>Listado de Eventos</h2>
+			<h2>Event list</h2>
 			<input
 				type="text"
 				placeholder="Buscar por título..."

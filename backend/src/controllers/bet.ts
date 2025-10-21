@@ -113,6 +113,10 @@ router.post("/:id", withUser, async (request, response, next) => {
       return response.status(400).json({ error: "Opción inválida" });
     }
 
+    if (body.amount < bet.minBet) {
+      return response.status(400).json({ error: `La apuesta mínima es ${bet.minBet}` });
+    }
+
     const myBet = {
       betId: bet.id,
       option: body.option,
@@ -125,16 +129,9 @@ router.post("/:id", withUser, async (request, response, next) => {
     bet.pool = bet.pool + body.amount
     bet.betsCount = bet.betsCount + 1
     bet.participants = bet.participants.concat(user.id)
-    await bet.save()
+    const betUpdated = await bet.save()
 
-    response.status(201).json({
-      betId: bet.id,
-      userId: user.id,
-      option: body.option,
-      amount: body.amount,
-      pool: bet.pool,
-      betsCount: bet.betsCount
-    });
+    response.status(201).json(betUpdated);
   }
 })
 

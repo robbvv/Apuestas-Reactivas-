@@ -125,7 +125,7 @@ const EventForm = () => {
 
   return (
     <div className="main-container">
-      <h1>Crear un nuevo evento</h1>
+      <h1>Create a new event</h1>
       <form className="form-container" onSubmit={handleSubmit}>
         <label className="form-inline">Title: <input
           type="text"

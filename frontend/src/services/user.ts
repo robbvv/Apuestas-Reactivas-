@@ -17,7 +17,7 @@ const getUser = async () => {
 
 const createUser = async (credentials: UserRegister) => {
   const res = await axios.post(registerUrl, credentials);
-  return res
+  return res.data;
 }
 
 export default { getUser, createUser }
