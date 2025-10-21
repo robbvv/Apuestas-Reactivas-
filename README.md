@@ -17,7 +17,7 @@ Puedes configurarlas de una de las siguientes formas:
 2. **Crear un nuevo archivo** llamado `.env` y **copiar** en él el contenido de `env.example`.
 
 
-## Instalación y ejecución en modo desarollo
+## Instalación y ejecución en modo desarrollo
 Se ejecuta en dos terminales distintas los siguientes pasos:
 
 ### Levantar el backend
