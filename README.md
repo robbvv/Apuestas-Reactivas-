@@ -6,6 +6,17 @@
 - Nelson Alejandro Navarro Barría
 - Roberto Ulises Vega Vega
 
+## Variables de entorno requeridas
+
+El proyecto requiere ciertas variables de entorno para ejecutarse correctamente.  
+Un ejemplo se encuentra en el archivo [`env.example`](./env.example).
+
+Puedes configurarlas de una de las siguientes formas:
+
+1. **Renombrar** el archivo `env.example` a `.env`, o  
+2. **Crear un nuevo archivo** llamado `.env` y **copiar** en él el contenido de `env.example`.
+
+
 ## Instalación y ejecución en modo desarollo
 Se ejecuta en dos terminales distintas los siguientes pasos:
 
@@ -29,15 +40,6 @@ cd frontend
 npm install
 npm run dev
 ```
-## Variables de entorno requeridas
-
-El proyecto requiere ciertas variables de entorno para ejecutarse correctamente.  
-Un ejemplo se encuentra en el archivo [`env.example`](./env.example).
-
-Puedes configurarlas de una de las siguientes formas:
-
-1. **Renombrar** el archivo `env.example` a `.env`, o  
-2. **Crear un nuevo archivo** llamado `.env` y **copiar** en él el contenido de `env.example`.
 
 
 ## Instalación y ejecución en modo producción
