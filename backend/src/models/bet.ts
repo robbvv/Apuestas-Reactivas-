@@ -22,11 +22,13 @@ interface IBet {
   options: IOption[];
   owner: mongoose.Types.ObjectId;
   participants: mongoose.Types.ObjectId[];
+  status: "open" | "locked" | "resolved";
+  winningOption?: string | null;
 }
 
 const optionSchema = new Schema<IOption>({
   name: { type: String, required: true },
-  payout: { type: Number, required: true }
+  payout: { type: Number, required: true, min: 1 }
 });
 
 const betSchema = new Schema<IBet>({
@@ -54,7 +56,8 @@ const betSchema = new Schema<IBet>({
       ref: "User",
     },
   ],
-  
+  status: { type: String, enum: ["open", "locked", "resolved"], default: "open" },
+  winningOption: { type: String },
 });
 
 betSchema.set("toJSON", {

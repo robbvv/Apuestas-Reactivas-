@@ -23,4 +23,7 @@ export type EventData = {
     options: EventOption[];
     owner: Partial<UserData>; // id, username por ahora
     participants: string[]; // ids
+    status: "open" | "locked" | "resolved";
+    winningOption?: string | null;
 }
+

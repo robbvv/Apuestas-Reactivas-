@@ -15,6 +15,7 @@ export interface IUser {
   passwordHash: string;
   bets: IUserBet[];
   ownBets: mongoose.Types.ObjectId[];
+  coins: number;
 };
 
 const userBetSchema = new Schema<IUserBet>({
@@ -35,6 +36,7 @@ const userSchema = new Schema<IUser>({
       ref: "Bet",
     },
   ],
+  coins: { type: Number, default: 0 }
 });
 
 const User  = mongoose.model<IUser>("User", userSchema);

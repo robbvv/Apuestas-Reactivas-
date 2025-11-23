@@ -19,7 +19,7 @@ const createEvent = async (event: Omit<EventData, "id">): Promise<EventData> => 
     return request.data;
 };
 
-const betEvent = async (id: string, option: string, amount: number) => {
+const betOnEvent = async (id: string, option: string, amount: number) => {
     const request = await axiosSecure.post(`${baseUrl}/${id}`, {option: option, amount: amount});
     return request.data;
 }
@@ -28,5 +28,5 @@ export default {
     getAllEvents,
     getById,
     createEvent,
-    betEvent,
+    betOnEvent,
 };

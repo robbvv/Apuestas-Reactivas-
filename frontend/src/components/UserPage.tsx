@@ -1,22 +1,20 @@
 import type { UserData } from "../types/user";
-import userService from "../services/user"
+import userService from "../services/user";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 
 //falta css
 const UserPage = () => {
   
-  const [user, setUser] = useState<UserData | null>(null);
+  const { user, restoreLogin } = useAuthStore();
   const navigate = useNavigate();
 
   useEffect(() => {
     const init = async () => {
-      try {
-        const res = await userService.getUser();
-        setUser(res);
-      } catch (error) {
+      await restoreLogin();
+      if(!user)
         navigate("/login");
-      }
     }
     init();
   }, [])
@@ -26,6 +24,9 @@ const UserPage = () => {
   return (
     <div className="main-container">
       <h1>Your username is: {user.username}</h1>
+      <div className="container-info">
+        <h2>Your coins to bet: {user.coins}</h2>
+      </div>
       <div className="container-info">
         <h2>Your bets</h2>
         {user.bets && user.bets.length > 0 ? (

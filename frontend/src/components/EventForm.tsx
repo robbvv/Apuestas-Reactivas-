@@ -2,10 +2,9 @@ import { useState , useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { UserData } from "../types/user";
 import type { EventData } from "../types/event";
-//import axios from "axios";
 import "../styles/event-form.css";
-import userService from "../services/user"
 import eventService from "../services/events";
+import { useAuthStore } from "../store/authStore";
 
 
 const EventForm = () => {
@@ -21,17 +20,14 @@ const EventForm = () => {
   const [newOptionName, setNewOptionName] = useState("");
   const [newOptionPayout, setNewOptionPayout] = useState<number>(1);
 
-  const [user, setUser] = useState<UserData | null>(null);
+  const { user, restoreLogin } = useAuthStore();
   const navigate = useNavigate();
 
   useEffect(() => {
     const init = async () => {
-      try {
-        const res = await userService.getUser();
-        setUser(res);
-      } catch (error) {
+      await restoreLogin();
+      if(!user)
         navigate("/login");
-      }
     }
     init();
   }, [])
@@ -63,6 +59,7 @@ const EventForm = () => {
       betsCount: 0,
       options: newOptions,
       participants: [],
+      status: "open",
     };
 
     eventService.createEvent(newEvent);

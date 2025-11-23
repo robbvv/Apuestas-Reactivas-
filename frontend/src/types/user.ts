@@ -7,10 +7,12 @@ export type UserBet = {
   placedAt: string; 
 };
 
+
 export type UserData = {
   id: string;
   username: string;
   email: string;
   bets: UserBet[];
   ownBets: Partial<EventData>[];
+  coins: number;
 };

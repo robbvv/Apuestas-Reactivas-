@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import config from "../utils/config";
 import { withUser } from "../utils/middleware";
 
+
 const router = express.Router();
 
 router.get("/", async (request, response) => {
@@ -38,7 +39,7 @@ router.post("/", withUser, async (request, response, next) => {
     });
   } else {
     // body.options debe ser un array de { name, payout }
-    const options = body.options.map((opt: any) => ({
+    const options = body.options.map((opt: IOption) => ({
       name: opt.name,
       payout: opt.payout
     }));
@@ -117,19 +118,25 @@ router.post("/:id", withUser, async (request, response, next) => {
       return response.status(400).json({ error: `La apuesta mínima es ${bet.minBet}` });
     }
 
+    if (user.coins < body.amount) {
+      return response.status(400).json({ error: "Fondos insuficientes" });
+    }
+
     const myBet = {
       betId: bet.id,
       option: body.option,
       amount: body.amount,
       placedAt: new Date()
     }
-    user.bets = user.bets.concat(myBet)
-    await user.save()
 
-    bet.pool = bet.pool + body.amount
-    bet.betsCount = bet.betsCount + 1
-    bet.participants = bet.participants.concat(user.id)
-    const betUpdated = await bet.save()
+    user.bets = user.bets.concat(myBet);
+    user.coins -= body.amount;
+    await user.save();
+
+    bet.pool += body.amount;
+    bet.betsCount +=  1;
+    bet.participants = bet.participants.concat(user.id);
+    const betUpdated = await bet.save();
 
     response.status(201).json(betUpdated);
   }
