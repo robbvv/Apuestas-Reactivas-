@@ -1,14 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Container, Row, Col, Card, Form, Button, Alert } from "react-bootstrap";
 import userService from "../services/user";
-import "../styles/event-form.css";
-// falta css
+import { useAuthStore } from "../store/authStore";
+import { useNavigate } from "react-router-dom";
+
 const RegisterPage = () => {
+  const { user } = useAuthStore();
+  const navigate = useNavigate();
   const [newUsername, setNewUsername] = useState<string>("")
   const [newEmail, setNewEmail] = useState<string>("")
   const [newPassword, setNewPassword] = useState<string>("")
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if(user)
+      navigate("/me");
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +50,7 @@ const RegisterPage = () => {
     try {
       await userService.createUser(newUser);
 
-      setSuccessMessage("User created!");
+      setSuccessMessage("User created successfully!");
       setNewUsername("");
       setNewEmail("");
       setNewPassword("");
@@ -54,18 +63,72 @@ const RegisterPage = () => {
     }
   }
 
-  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setNewUsername(event.target.value);
-  };
+  return (
+    <Container className="py-5">
+      <Row className="justify-content-center">
+        <Col xs={12} md={6} lg={4}>
+          <Card className="shadow-sm">
+            <Card.Body>
+              <Card.Title className="mb-4 text-center">Register</Card.Title>
 
-  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setNewEmail(event.target.value);
-  };
+              {errorMessage && (
+                <Alert variant="danger" className="mb-3">
+                  {errorMessage}
+                </Alert>
+              )}
 
-  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setNewPassword(event.target.value);
-  };
+              {successMessage && (
+                <Alert variant="success" className="mb-3">
+                  {successMessage}
+                </Alert>
+              )}
 
+              <Form onSubmit={handleSubmit}>
+                <Form.Group className="mb-4" controlId="registerUsername">
+                  <Form.Label>Username</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter your username"
+                    value={newUsername}
+                    onChange={(e) => setNewUsername(e.target.value)}
+                  />
+                </Form.Group>
+
+
+                <Form.Group className="mb-4" controlId="registerEmail">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control
+                    type="email"
+                    placeholder="Enter your email"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-4" controlId="registerPassword">
+                  <Form.Label>Password</Form.Label>
+                  <Form.Control
+                    type="password"
+                    placeholder="Enter your password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                </Form.Group>
+
+                <div className="d-grid">
+                  <Button type="submit" variant="primary">
+                    Register
+                  </Button>
+                </div>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
+  );
+
+  /*
   return (
     <div className="main-container">
       <h1>Sign up</h1>
@@ -97,6 +160,7 @@ const RegisterPage = () => {
       </form>
     </div>
   )
+  */
 }
 
 export default RegisterPage;

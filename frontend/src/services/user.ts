@@ -20,4 +20,9 @@ const createUser = async (credentials: UserRegister) => {
   return res.data;
 }
 
-export default { getUser, createUser }
+const getTopUsers = async () => {
+  const request = await axiosSecure.get(`/api/users/ranking`);
+  return request.data; // devuelve un array de { username, coins }
+};
+
+export default { getUser, createUser, getTopUsers }

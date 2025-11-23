@@ -1,11 +1,10 @@
+import { Container, Row, Col, Card, Form, Button, Alert, InputGroup, ListGroup } from "react-bootstrap";
 import { useState , useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { UserData } from "../types/user";
 import type { EventData } from "../types/event";
-import "../styles/event-form.css";
 import eventService from "../services/events";
 import { useAuthStore } from "../store/authStore";
-
 
 const EventForm = () => {
   const [newEventTitle, setNewEventTitle] = useState<string>("");
@@ -19,6 +18,9 @@ const EventForm = () => {
   const [newOptions, setNewOptions] = useState<{ name: string; payout: number }[]>([]);
   const [newOptionName, setNewOptionName] = useState("");
   const [newOptionPayout, setNewOptionPayout] = useState<number>(1);
+
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
 
   const { user, restoreLogin } = useAuthStore();
   const navigate = useNavigate();
@@ -34,12 +36,29 @@ const EventForm = () => {
 
   if (!user) return (<p>LOADING USER</p>)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const eventOwner: Partial<UserData> = {
       id: user.id,
       username: user.username,
+    }
+    if (
+      !newEventTitle.trim() ||
+      !newEventOrganizer.trim() ||
+      !newEventEmail.trim() ||
+      !newEventDescription.trim() ||
+      !newEventSport.trim() ||
+      !newEventLocation.trim() ||
+      !newEventDate.trim()
+    ) {
+      setErrorMessage("All fields are required.");
+      return;
+    }
+
+    if (newOptions.length < 2) {
+      setErrorMessage("You must add at least two bet options.");
+      return;
     }
 
     const newEvent: Omit<EventData, "id"> = {
@@ -62,7 +81,12 @@ const EventForm = () => {
       status: "open",
     };
 
-    eventService.createEvent(newEvent);
+    try {
+      await eventService.createEvent(newEvent);
+      setSuccessMessage("Event created successfully!")
+    } catch {
+      setErrorMessage("The event couldn't be created, try again.")
+    }
 
     setNewEventTitle("");
     setNewEventOrganizer("");
@@ -74,136 +98,198 @@ const EventForm = () => {
     setNewEventDate("");
     setNewOptions([]);
     setNewOptionName("");
-    setNewOptionPayout(0);
-  };
-
-  const handleEventTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setNewEventTitle(event.target.value);
-  };
-
-  const handleEventOrganizerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setNewEventOrganizer(event.target.value);
-  };
-
-  const handleEventEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setNewEventEmail(event.target.value);
-  };
-
-  const handleEventDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-      setNewEventDescription(event.target.value);
-  };
-
-  const handleEventSportChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setNewEventSport(event.target.value);
-  };
-
-  const handleEventLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setNewEventLocation(event.target.value);
-  };
-
-  const handleEventMinimumBetChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setNewEventMinimumBet(Number(event.target.value));
-  };
-
-  const handleEventDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      setNewEventDate(event.target.value);
+    setNewOptionPayout(1);
   };
 
   const handleAddOption = () => {
     if (!newOptionName || newOptionPayout <= 0) return;
     setNewOptions([...newOptions, { name: newOptionName, payout: newOptionPayout }]);
     setNewOptionName("");
-    setNewOptionPayout(0);
+    setNewOptionPayout(1);
   };
 
   const handleRemoveOption = (index: number) => {
     setNewOptions(newOptions.filter((_, i) => i !== index));
   };
 
+
+
   return (
-    <div className="main-container">
-      <h1>Create a new event</h1>
-      <form className="form-container" onSubmit={handleSubmit}>
-        <label className="form-inline">Title: <input
-          type="text"
-          value={newEventTitle}
-          placeholder="Type the title"
-          onChange={handleEventTitleChange}
-        />
-        </label>
-        <label className="form-inline">Organizer: <input
-          type="text"
-          value={newEventOrganizer}
-          placeholder="Type the organizer's name"
-          onChange={handleEventOrganizerChange}
-        />
-        </label>
-        <label className="form-inline">Email: <input
-          type="text"
-          value={newEventEmail}
-          placeholder="Type the organizer's email"
-          onChange={handleEventEmailChange}
-          />
-        </label>
-        <label>Description:</label>
-        <textarea
-          value={newEventDescription}
-          placeholder="Describe the event"
-          rows={10}
-          cols={40}
-          onChange={handleEventDescriptionChange}
-          />
-        <label className="form-inline">Sport: <input
-          type="text"
-          value={newEventSport}
-          placeholder="Type the event sport"
-          onChange={handleEventSportChange}
-          />
-        </label>
-        <label className="form-inline">Location: <input
-          type="text"
-          value={newEventLocation}
-          placeholder="Type the event location"
-          onChange={handleEventLocationChange}
-          />
-        </label>
-        <label className="form-inline">Date of the event: <input
-          type="date"
-          value={newEventDate}
-          onChange={handleEventDateChange}
-          required
-          />
-        </label>
-        <label className="form-inline">Minimum Bet: <input
-          type="number"
-          value={newEventMinimumBet}
-          placeholder="Type the minimum bet"
-          onChange={handleEventMinimumBetChange}
-          />
-        </label>
-        <div className="options-container">
-          <h3>Bet options</h3>
-          <div className="form-inline">
-            <input type="text" value={newOptionName} onChange={(e) => setNewOptionName(e.target.value)} placeholder="Option name" />
-            <input type="number" min={1} step={0.1} value={newOptionPayout} onChange={(e) => setNewOptionPayout(Number(e.target.value))} placeholder="Payout" />
-            <button type="button" onClick={handleAddOption}>Add option</button>
-          </div>
-          <ul>
-            {newOptions.map((opt, index) => (
-              <li key={index}>
-                {opt.name} - {opt.payout} 
-                <button type="button" onClick={() => handleRemoveOption(index)}>Remove</button>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <button type="submit">Publish event</button>
-      </form>
-    </div>
-  )
+    <Container className="py-5">
+      <Row className="justify-content-center">
+        <Col xs={12} md={10} lg={8}>
+          <Card className="shadow-sm">
+            <Card.Body>
+              <Card.Title className="mb-4 text-center">Create a new event</Card.Title>
+
+              {errorMessage && (
+                <Alert variant="danger" className="mb-3">
+                  {errorMessage}
+                </Alert>
+              )}
+
+              {successMessage && (
+                <Alert variant="success" className="mb-3">
+                  {successMessage}
+                </Alert>
+              )}
+
+              <Form onSubmit={handleSubmit}>
+                <Row className="mb-3">
+                  
+                  <Col>
+                    <Form.Group className="mb-4">
+                      <Form.Label>Title</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Type the event title"
+                        value={newEventTitle}
+                        onChange={(e) => setNewEventTitle(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
+
+                  <Col>
+                    <Form.Group className="mb-4">
+                      <Form.Label>Organizer</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Type the organizer's name"
+                        value={newEventOrganizer}
+                        onChange={(e) => setNewEventOrganizer(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
+
+                  <Form.Group className="mb-4">
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control
+                      type="text"
+                      placeholder="Type the organizer's email"
+                      value={newEventEmail}
+                      onChange={(e) => setNewEventEmail(e.target.value)}
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="mb-4">
+                    <Form.Label>Description</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={4}
+                      placeholder="Describe the event"
+                      value={newEventDescription}
+                      onChange={(e) => setNewEventDescription(e.target.value)}
+                    />
+                  </Form.Group>
+
+                  <Row className="mb-3">
+                    <Col>
+                      <Form.Group className="mb-4">
+                        <Form.Label>Sport</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Type the event sport"
+                          value={newEventSport}
+                          onChange={(e) => setNewEventSport(e.target.value)}
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col>
+                      <Form.Group className="mb-4">
+                        <Form.Label>Location</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Type the event location"
+                          value={newEventLocation}
+                          onChange={(e) => setNewEventLocation(e.target.value)}
+                        />
+                      </Form.Group>
+                    </Col>
+                  </Row>
+
+                  <Row className="mb-4">
+                    <Col xs={12} md={6}>
+                      <Form.Group controlId="eventDate">
+                        <Form.Label>Date</Form.Label>
+                        <Form.Control
+                          type="date"
+                          value={newEventDate}
+                          onChange={(e) => setNewEventDate(e.target.value)}
+                          required
+                        />
+                      </Form.Group>
+                    </Col>
+                    <Col xs={12} md={6} className="mt-3 mt-md-0">
+                      <Form.Group controlId="eventMinBet">
+                        <Form.Label>Minimum bet</Form.Label>
+                        <Form.Control
+                          type="number"
+                          min={1}
+                          value={newEventMinimumBet}
+                          placeholder="Minimum bet amount"
+                          onChange={(e) => setNewEventMinimumBet(Number(e.target.value))}
+                        />
+                      </Form.Group>
+                    </Col>
+                </Row> 
+                  <div className="mb-3">
+                    <h5>Bet options</h5>
+                    <InputGroup className="mb-2">
+                      <Form.Control
+                        type="text"
+                        placeholder="Option name (e.g. Team A wins)"
+                        value={newOptionName}
+                        onChange={(e) => setNewOptionName(e.target.value)}
+                      />
+                      <Form.Control
+                        type="number"
+                        min={1}
+                        step={0.1}
+                        placeholder="Payout"
+                        value={newOptionPayout}
+                        onChange={(e) => setNewOptionPayout(Number(e.target.value))}
+                        style={{ maxWidth: "130px" }}
+                      />
+                      <Button variant="outline-primary" type="button" onClick={handleAddOption}>
+                        Add option
+                      </Button>
+                    </InputGroup>
+
+                    {newOptions.length > 0 && (
+                      <ListGroup>
+                        {newOptions.map((opt, index) => (
+                          <ListGroup.Item
+                            key={index}
+                            className="d-flex justify-content-between align-items-center"
+                          >
+                            <span>
+                              {opt.name} – payout: <strong>{opt.payout}</strong>
+                            </span>
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              type="button"
+                              onClick={() => handleRemoveOption(index)}
+                            >
+                              Remove
+                            </Button>
+                          </ListGroup.Item>
+                        ))}
+                      </ListGroup>
+                    )}
+                  </div>
+                  <Button type="submit" variant="primary">
+                    Publish event
+                  </Button>
+                </Row>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
+  );
 }
 
 export default EventForm;
-
-//const starButton = (e_id: number) => <><button onClick={() => addStar(e_id)</>
-//}

@@ -1,5 +1,5 @@
 import express from "express";
-import Bet from "../models/bet";
+import Bet, { IOption } from "../models/bet";
 import User from "../models/user";
 import jwt from "jsonwebtoken";
 import config from "../utils/config";
@@ -141,5 +141,82 @@ router.post("/:id", withUser, async (request, response, next) => {
     response.status(201).json(betUpdated);
   }
 })
+
+// ruta para que owner cambie status de la apuesta
+router.put("/:id/status", withUser, async (req, res) => {
+  const { status, winningOption } = req.body;
+  const bet = await Bet.findById(req.params.id);
+
+  if (!bet) {
+    return res.status(404).json({ error: "Bet not found" });
+  }
+
+  // asegurarse de que solo el owner puede cambiar estado
+  if (bet.owner.toString() !== req.userId) {
+    return res.status(403).json({ error: "Not authorized" });
+  }
+
+  const validStatuses = ["open", "locked", "resolved"];
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ error: "Invalid status value" });
+  }
+
+  // validar transiciones
+  const allowedTransitions = {
+    open: "locked",
+    locked: "resolved",
+    resolved: null, // no se puede mover desde resolved
+  };
+
+  if (allowedTransitions[bet.status] !== status) {
+    return res.status(400).json({
+      error: `Invalid transition: ${bet.status} → ${status}`,
+    });
+  }
+
+  // si se está resolviendo, debe venir un ganador válido
+  if (status === "resolved") {
+    if (!winningOption) {
+      return res.status(400).json({ error: "Winning option required" });
+    }
+
+    const option = bet.options.find(o => o.name === winningOption);
+    if (!option) {
+      return res.status(400).json({ error: "Invalid winning option" });
+    }
+
+    bet.winningOption = winningOption;
+
+    const payoutMultiplier = option.payout ?? 1;
+
+    const winners = await User.find({
+      "bets.betId": bet._id,
+      "bets.option": winningOption
+    });
+
+    for (const user of winners) {
+      const betData = user.bets.find(
+        b => b.betId.toString() === bet._id.toString()
+            && b.option === winningOption
+      );
+
+      if (!betData) continue;
+
+      const payout = betData.amount * payoutMultiplier;
+
+      user.coins += payout;
+
+      await user.save();
+    }
+  }
+
+  bet.status = status;
+  bet.updatedAt = new Date();
+
+  await bet.save();
+  const updatedBet = await Bet.findById(bet.id).populate("owner", { username: 1 });
+
+  res.json(updatedBet);
+});
 
 export default router;

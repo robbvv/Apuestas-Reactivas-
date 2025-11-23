@@ -15,6 +15,7 @@ export type authState = {
   login: (credentials: Credentials) => void,
   logout: () => void,
   restoreLogin: () => void,
+  clearError: () => void,
 }
 
 // Usa funciones de loginService para controlar la autentificación, user queda global y
@@ -40,5 +41,9 @@ export const useAuthStore = create<authState>()(persist((set) => ({
   restoreLogin: async () => {
     const user = await loginService.restoreLogin();
     set({ user: user });
+  },
+
+  clearError: () => {
+    set({ loginError: null });
   }
 }), { name: "auth-storage" })); // se usa persist con auth-storage para no perder al user al recargar pagina

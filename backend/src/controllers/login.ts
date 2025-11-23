@@ -33,7 +33,7 @@ router.post("/", async (request, response) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
       });
-      response.status(200).send({ username: user.username });
+      response.status(200).send(user);
     }
   } else {
     response.status(401).json({

@@ -14,7 +14,7 @@ const Event = ({ event: event }: EventProp) => (
     Sport: {event.sport} | Organizer: {event.organizer} | Last Updated: {event.updatedAt ? new Date(event.updatedAt).toLocaleString() : new Date(event.createdAt).toLocaleString()}
     </div>
     <div className="event-stats">
-    Stars: [{event.stars}] | Pool: [{event.pool}] | State: {new Date(event.date) > new Date() ? "upcoming" : "finished"}
+    Stars: [{event.stars}] | Pool: [{event.pool}] | State: {event.status}
     </div>
   </div>
 )

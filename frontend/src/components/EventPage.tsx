@@ -11,6 +11,7 @@ const EventPage = () => {
   const [event, setEvent] = useState<EventData | null>(null);
   const [newBetOption, setNewBetOption] = useState<string>("");
   const [newBetAmount, setNewBetAmount] = useState<number>(0);
+  const [winningOption, setWinningOption] = useState<string>("");
   
   useEffect(() => {
     const fetchEvent = async () => {
@@ -22,7 +23,7 @@ const EventPage = () => {
       restoreLogin();
     };
     fetchEvent();
-  }, [id])
+  }, [id, user])
 
   const isOwner = user?.id === event?.owner.id;
 
@@ -43,6 +44,19 @@ const EventPage = () => {
 
   const handleBetAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewBetAmount(Number(event.target.value));
+  };
+
+  const handleLockEvent = async () => {
+    if (!id) return;
+    const updated = await eventService.changeBetStatus(id, "locked", null);
+    setEvent(updated);
+  };
+
+  const handleResolveEvent = async () => {
+    if (!id || !winningOption) return;
+    const updated = await eventService.changeBetStatus(id, "resolved", winningOption);
+    setEvent(updated);
+    setWinningOption("");
   };
 
   const stateText = event.status === "open" ? "upcoming" : event.status === "locked" ? "in progress" : "finished";
@@ -85,55 +99,88 @@ const EventPage = () => {
       </div>
     )}
     {user && !isOwner && (
-      <div className="event-bet-form-container">
-        <form className="event-bet-form" onSubmit={handleSubmit}>
-          <label> Options: 
-            <select value={newBetOption} onChange={handleBetOptionChange}>
-              <option value="">-- Select an option --</option>
-              {event.options.map((opt) => (
-                <option key={opt.name} value={opt.name}>
-                  {opt.name} (payout: {opt.payout})
-                </option>
-              ))}
-            </select>
-          </label>
-          <label> Your bet: <input 
-            type="number" 
-            min={event.minBet}
-            value={newBetAmount}
-            placeholder="Type your bet"
-            onChange={handleBetAmountChange}
-            />
-          </label>
-          <button type="submit">Bet</button>
-        </form>
+      <div>
+        {event.status === "open" && ( 
+          <div className="event-bet-form-container">
+            <form className="event-bet-form" onSubmit={handleSubmit}>
+              <label> Options: 
+                <select value={newBetOption} onChange={handleBetOptionChange}>
+                  <option value="">-- Select an option --</option>
+                  {event.options.map((opt) => (
+                    <option key={opt.name} value={opt.name}>
+                      {opt.name} (payout: {opt.payout})
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label> Your bet: <input 
+                type="number" 
+                min={event.minBet}
+                value={newBetAmount}
+                placeholder="Type your bet"
+                onChange={handleBetAmountChange}
+                />
+              </label>
+              <button type="submit">Bet</button>
+            </form>
+          </div>
+        )}
+        {event.status === "locked" && (
+          <div className="locked-message">
+            <h3>Betting Closed</h3>
+            <p>This event is now <strong>locked</strong>. No more bets can be placed.</p>
+            <p>Stay tuned! The organizer will announce the winner soon.</p>
+          </div>
+        )}
+        {event.status === "resolved" && (
+          <div className="resolved-message">
+            <h3>🏆 Winner</h3>
+            <p>The winning option is: <strong>{event.winningOption}</strong></p>
+          </div>
+        )}
       </div>
     )}
     {user && isOwner && (
       <div>
         <h3>Owner settings:</h3>
-        {status === "open" && (
+
+        {event.status === "open" && (
           <div>
-            Betting is currently active.
-            If you want to stop new bets, change to a locked state:
-            <button>Lock betting</button>
-          </div>
-        )}
-        {status === "closed" && (
-          <div>
-            Betting is currently active.
-            If you want to stop new bets, change to a locked state:
-            <button>Lock betting</button>
-          </div>
-        )}
-        {status === "open" && (
-          <div>
-            Betting is currently active.
-            If you want to stop new bets, change to a locked state:
-            <button>Lock betting</button>
+            <p>Betting is currently <strong>open</strong> — users can still place bets.</p>
+            <p>If you're ready to stop new bets:</p>
+            <button onClick={handleLockEvent}>Lock betting</button>
           </div>
         )}
 
+        {event.status === "locked" && (
+          <div>
+            <p>Betting is <strong>locked</strong> — no more bets allowed.</p>
+            <p>Once you know the result, select a winner:</p>
+            <select
+              value={winningOption}
+              onChange={(e) => setWinningOption(e.target.value)}
+            >
+              <option value="">-- Choose a winner --</option>
+              {event.options.map((opt) => (
+                <option key={opt.name} value={opt.name}>
+                  {opt.name}
+                </option>
+              ))}
+            </select>
+
+            <button disabled={!winningOption} onClick={handleResolveEvent}>
+              Resolve event
+            </button>
+          </div>
+        )}
+
+        {event.status === "resolved" && (
+          <div>
+            <p>This bet has been <strong>resolved</strong>.</p>
+            <p>The winner was: {event.winningOption}</p>
+            <p>Nothing else to manage here</p>
+          </div>
+        )}
       </div>
     )}
   </div>

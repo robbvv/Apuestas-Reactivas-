@@ -1,29 +1,28 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-//import Home from "./components/Home";
+
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+import { useAuthStore } from "./store/authStore";
+import NavigationBar from "./components/Navbar";
 import EventForm from "./components/EventForm";
 import EventList from "./components/EventList";
 import EventPage from "./components/EventPage";
-import UserPage from "./components/UserPage";
+import UserPage from "./pages/Profile";
 import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
-import './App.css';
+import Ranking from "./pages/Ranking";
+import HomePage from "./pages/Home";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
-  const padding = {padding: 10};
-
     return (
       <Router>
-        <div>
-          <Link style={padding} to="/">Home</Link>
-          <Link style={padding} to="/event-list">Ver eventos</Link>
-          <Link style={padding} to="/event-form">Nuevo evento</Link>
-          <Link style={padding} to="/me">Ver Perfil</Link>
-          <Link style={padding} to="/login">Login</Link>
-          <Link style={padding} to="/register">Registrarse</Link>
-        </div>
+
+        <NavigationBar />
 
         <Routes>
-          
+          <Route
+            path="/"
+            element={ <HomePage /> }
+          />  
           <Route
             path="/event/:eventId"
             element={ <EventForm /> }
@@ -51,7 +50,11 @@ const App = () => {
           <Route
             path="/register"
             element={ <RegisterPage /> }
-          />    
+          />
+          <Route
+            path="/ranking"
+            element={ <Ranking /> }
+          />      
         </Routes>
 
       </Router>

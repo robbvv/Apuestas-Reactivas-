@@ -35,6 +35,16 @@ router.post("/", async (request, response, next) => {
 	}
 });
 
+// ranking
+router.get("/ranking", async (req, res) => {
+  // buscamos solo username y coins, ordenados por coins descendente
+  const topUsers = await User.find({}, { username: 1, coins: 1 })
+	.sort({ coins: -1 })
+	.limit(10);
+
+  res.json(topUsers);
+});
+
 router.get("/:id", async (request, response, next) => {
 	try {
 		const id = request.params.id;
@@ -44,5 +54,7 @@ router.get("/:id", async (request, response, next) => {
 		next(error);
 	}
 });
+
+
 
 export default router;

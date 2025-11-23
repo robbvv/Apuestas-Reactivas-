@@ -29,14 +29,15 @@ const userSchema = new Schema<IUser>({
   username: { type: String, required: true, unique: true, },
   email: { type: String , required: true, unique: true, },
   passwordHash: { type: String, required: true, },
-  bets: {  type: [userBetSchema]  },
+  bets: {  type: [userBetSchema], default: []  },
   ownBets: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Bet",
+      default: []
     },
-  ],
-  coins: { type: Number, default: 0 }
+  ], 
+  coins: { type: Number, default: 1000 }
 });
 
 const User  = mongoose.model<IUser>("User", userSchema);

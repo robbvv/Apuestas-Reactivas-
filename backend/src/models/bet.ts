@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-interface IOption {
+export interface IOption {
   name: string;
   payout: number;
 }

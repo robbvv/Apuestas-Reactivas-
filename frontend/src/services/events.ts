@@ -24,9 +24,15 @@ const betOnEvent = async (id: string, option: string, amount: number) => {
     return request.data;
 }
 
+const changeBetStatus = async (id: string, status: string, winningOption: string | null) => {
+    const request = await axiosSecure.put(`${baseUrl}/${id}/status`, {status: status, winningOption: winningOption});
+    return request.data;
+}
+
 export default {
     getAllEvents,
     getById,
     createEvent,
     betOnEvent,
+    changeBetStatus,
 };
