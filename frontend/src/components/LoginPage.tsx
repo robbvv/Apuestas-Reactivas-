@@ -1,48 +1,31 @@
 import { useState, useEffect } from "react";
-import type { UserData } from "../types/user";
-import loginService from "../services/login"
+import { useAuthStore } from "../store/authStore";
 
 const LoginPage = () => {
+  const { user, loginError, login, logout, restoreLogin } = useAuthStore();
+
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [user, setUser] = useState<UserData | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    const init = async () => {
-      const user = await loginService.restoreLogin();
-      setUser(user);
-    }
-    init();
+    restoreLogin();
   }, []);
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    try {
-      const user = await loginService.login({
-        username,
-        password,
-      });
-      setUser(user);
-      setUsername("");
-      setPassword("");
-    } catch (err) {
-      setErrorMessage("Wrong credentials");
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
-    }
+    await login({ username: username, password: password })
+    setUsername("");
+    setPassword("");
   };
 
   const handleLogout = () => {
-    loginService.logout();
-    setUser(null);
+    logout()
   };
 
   return (
     <div className="main-container">
       <h1>Login Page</h1>
-      <p style={{ color: "red" }}>{errorMessage}</p>
+      <p style={{ color: "red" }}>{loginError}</p>
       {!user ? 
       (<form className="form-container" onSubmit={handleLogin}>
         <label className="form-inline"> Username:
