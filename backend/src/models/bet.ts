@@ -15,7 +15,6 @@ interface IBet {
   date: Date;
   createdAt: Date;
   updatedAt?: Date | null;
-  stars: number;
   minBet: number;
   pool: number;
   betsCount: number;
@@ -41,7 +40,6 @@ const betSchema = new Schema<IBet>({
   date: { type: Date, default: Date.now() },
   createdAt: { type: Date, default: Date.now() },
   updatedAt: { type: Date, default: Date.now() },
-  stars: { type: Number, },
   minBet: { type: Number, required: true },
   pool: { type: Number, },
   betsCount: { type: Number, },

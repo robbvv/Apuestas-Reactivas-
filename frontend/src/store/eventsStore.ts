@@ -55,7 +55,7 @@ export const useEventsStore = create<EventsState>((set) => ({
         currentEvent: updated
       }));
     } catch {
-      console.error("Error changing status", id);
+      console.error("Error cambiando el status", id);
     }
   },
 }));

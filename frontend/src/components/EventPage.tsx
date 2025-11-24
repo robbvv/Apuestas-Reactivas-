@@ -73,7 +73,6 @@ const EventPage = () => {
           <Card.Text>{event.description}</Card.Text>
 
           <ListGroup className="mb-3">
-            <ListGroup.Item>Stars: {event.stars}</ListGroup.Item>
             <ListGroup.Item>Prize Pool: {event.pool}</ListGroup.Item>
             <ListGroup.Item>Participants: {event.betsCount}</ListGroup.Item>
           </ListGroup>
@@ -81,7 +80,6 @@ const EventPage = () => {
           <p><strong>Location:</strong> {event.location}</p>
           <p><strong>Date:</strong> {new Date(event.date).toLocaleString()}</p>
 
-          {/* VISITOR MESSAGES */}
           {!user && (
             <>
               {event.status === "open" && (
@@ -107,7 +105,6 @@ const EventPage = () => {
             </>
           )}
 
-          {/* USER BETTING SECTION */}
           {user && !isOwner && (
             <>
               {event.status === "open" && (
@@ -163,7 +160,6 @@ const EventPage = () => {
             </>
           )}
 
-          {/* OWNER PANEL */}
           {user && isOwner && (
             <div className="mt-4">
               <h4>Organizer Panel</h4>

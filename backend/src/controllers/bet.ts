@@ -54,7 +54,6 @@ router.post("/", withUser, async (request, response, next) => {
       date: body.date,
       createdAt: body.createdAt,
       updatedAt: body.updatedAt,
-      stars: body.stars,
       minBet: body.minBet,
       pool: body.pool,
       betsCount: body.betsCount,
@@ -83,7 +82,6 @@ router.put("/:id", withUser, async (request, response, next) => {
     bet.sport = body.sport;
     bet.location = body.location;
     bet.date = body.date;
-    bet.stars = body.stars;
     bet.pool = body.pool;
     bet.betsCount = body.betsCount;
     bet.updatedAt = new Date();
@@ -111,15 +109,15 @@ router.post("/:id", withUser, async (request, response, next) => {
   } else {
     const validOption = bet.options.find(opt => opt.name === body.option);
     if (!validOption) {
-      return response.status(400).json({ error: "Opción inválida" });
+      return response.status(400).json({ error: "Invalid option" });
     }
 
     if (body.amount < bet.minBet) {
-      return response.status(400).json({ error: `La apuesta mínima es ${bet.minBet}` });
+      return response.status(400).json({ error: `The minimum bet is ${bet.minBet}` });
     }
 
     if (user.coins < body.amount) {
-      return response.status(400).json({ error: "Fondos insuficientes" });
+      return response.status(400).json({ error: "Insufficient coins" });
     }
 
     const myBet = {
@@ -202,7 +200,7 @@ router.put("/:id/status", withUser, async (req, res) => {
 
       if (!betData) continue;
 
-      const payout = betData.amount * payoutMultiplier;
+      const payout = Math.round(betData.amount * payoutMultiplier);
 
       user.coins += payout;
 

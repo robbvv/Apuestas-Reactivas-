@@ -72,7 +72,6 @@ const EventForm = () => {
       date: new Date(newEventDate).toISOString(),
       createdAt: new Date().toISOString(),
       updatedAt: null,
-      stars: 0,
       minBet: newEventMinimumBet,
       pool: 0,
       betsCount: 0,

@@ -141,17 +141,21 @@ Actualiza tanto `events` como `currentEvent` tras apostar o modificar un evento.
 
 # Mapa de rutas y flujo de autenticación
 
-### Rutas principales
+La aplicación usa React Router para la navegación
+### Rutas públicas
 
 * `/` → Muestra la página principal de la aplicación (`HomePage`).
 * `/register` → Formulario de registro de nuevos usuarios (`RegisterPage`).
 * `/login` → Formulario de inicio de sesión (`LoginPage`).
-* `/me` → Página del perfil del usuario autenticado (`UserPage`).
-* `/event-form` → Formulario para crear un nuevo evento (`EventForm`).
 * `/event-list` → Lista completa de eventos disponibles para apostar (`EventList`).
 * `/event-page/:id` → Vista detallada de un evento y acciones asociadas, como apostar si eres usuario, o definir un ganador si eres creador del evento (`EventPage`).
 <!-- * `/event/:eventId` → Formulario para editar un evento existente? (`EventForm`). -->
 * `/ranking` → Vista del ranking global de usuarios (`Ranking`).
+### Rutas protegidas
+* `/me` → Página del perfil del usuario autenticado (`UserPage`).
+* `/event-form` → Formulario para crear un nuevo evento (`EventForm`).
+
+
 
 ### Flujo de autenticación
 
@@ -206,3 +210,17 @@ Permiten escribir pruebas consistentes y reutilizables.
 ---
 
 # Librería de estilos utilizada y decisiones de diseño
+Se utilizó la librería React Bootstrap para el estilo y organización de la página.
+
+Sobre las decisiones de diseño, se decidió implementar la aplicación tal que usa:
+
+* Barra de navegación: Para controlar la navegación sobre la aplicación es escencial tener una barra de navegación para poder intercambiando entre la página principal, listado de eventos, crear eventos, perfil, login y logout.
+
+* Cards de Bootstrap: Se utilizan Cards junto Row y Col para organizar de manera estilizada los formularios y el listado de eventos.
+
+* Uso de colores suaves: Se usan colores simples como blanco y un fondo azul muy claro, colores fuertes como negro o amarillo para indicar zonas importantes como la barra de navegación o las monedas del usuario.
+
+* Interacción: Casi todos los componentes de React Bootstrap tienen interacciones que mejoran la experiencia, por ejemplo, hover del mouse sobre un botón y este cambia de color, rutas se resaltan en la barra de navegación.
+
+# URL aplicación
+

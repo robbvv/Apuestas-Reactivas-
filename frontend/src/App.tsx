@@ -21,10 +21,8 @@ const App = () => {
   }, [restoreLogin]);
     return (
       <Router>
-        <Routes>
-
           <NavigationBar />
-
+        <Routes>
           {/* --- RUTAS PÚBLICAS --- */}
           <Route path="/" element={<HomePage />} />
           <Route path="/event-list" element={<EventList />} />

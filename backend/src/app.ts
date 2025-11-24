@@ -17,14 +17,14 @@ app.use(middleware.requestLogger);
 
 app.use("/api/login", loginRouter);
 app.use("/api/users", usersRouter);
-app.use("/api/bets", betsRouter)
-
-app.use(middleware.unknownEndpoint);
-app.use(middleware.errorHandler);
+app.use("/api/bets", betsRouter);
 
 if (process.env.NODE_ENV !== "production") {
   app.use("/api/testing", testingRouter);
 }
+
+app.use(middleware.unknownEndpoint);
+app.use(middleware.errorHandler);
 
 mongoose.set("strictQuery", false);
 

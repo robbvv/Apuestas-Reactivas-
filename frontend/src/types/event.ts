@@ -16,7 +16,6 @@ export type EventData = {
     date: string;
     createdAt: string;
     updatedAt: string | null;
-    stars: number;
     minBet: number;
     pool: number;
     betsCount: number;
