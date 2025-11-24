@@ -1,11 +1,12 @@
 import { test, expect } from "@playwright/test";
 import { loginWith, registerUser, createEvent } from "./helper";
 
-const baseUrl="http://localhost:5173"
+const baseUrl="http://localhost:5173" 
+const resetUrl="http://localhost:3000/api"
 
 test.describe("Event app", () => {
   test.beforeEach(async ({ page, request }) => {
-    await request.post(baseUrl+"/testing/reset");
+    await request.post(resetUrl+"/testing/reset");
     await registerUser(page, "bob", "bob@mail.com", "pass123");
     await page.goto(baseUrl+"/");
   });
@@ -19,6 +20,7 @@ test.describe("Event app", () => {
     await loginWith(page, "bob", "pass123");
     await expect(page.getByText("Signed in as bob")).toBeVisible();
   });
+
 
   test.describe("when logged in", () => {
     test.beforeEach(async ({ page }) => {
@@ -38,7 +40,6 @@ test.describe("Event app", () => {
         await createEvent(page, "Single Event");
       });
 
-      // Tenemos opción para editar siquiera? creo que nop
       test("event can be updated", async ({ page }) => {
         await page.goto(baseUrl+"/event-list");
         await page.getByText("Single Event").click();
