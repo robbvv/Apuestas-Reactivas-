@@ -1,24 +1,12 @@
 import { Container, Row, Col, Card, ListGroup, Badge } from "react-bootstrap";
-import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { FaCoins } from "react-icons/fa";
 
 const UserPage = () => {
-  
-  const { user, restoreLogin } = useAuthStore();
-  const navigate = useNavigate();
+  const { user } = useAuthStore();
 
-  useEffect(() => {
-    const init = async () => {
-      await restoreLogin();
-      if(!user)
-        navigate("/login");
-    }
-    init();
-  }, [])
-
-  if (!user) return (<></>)
+  if (!user) return null
 
   return (
     <Container className="py-5">

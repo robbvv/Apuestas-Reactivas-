@@ -120,6 +120,10 @@ router.post("/:id", withUser, async (request, response, next) => {
       return response.status(400).json({ error: "Insufficient coins" });
     }
 
+    if (bet.participants.includes(user.id)) {
+      return response.status(400).json({ error: "You already placed a bet on this event" });
+    }
+
     const myBet = {
       betId: bet.id,
       option: body.option,

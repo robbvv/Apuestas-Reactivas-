@@ -1,7 +1,7 @@
 
 # Proyecto: Apuestas Reactivas (Reactive Gambling)
 
-Apuestas Reactivas es una aplicación web de **apuestas deportivas** sujeto a un sistema de **fichas virtuales** intercambiables por premios. El fin de la aplicación es aumentar el interés y participación en los eventos deportivos organizados dentro de la facultad y/o a nivel universitario.
+***Apuestas Reactivas*** *(Reactive Gambling)* es una aplicación web de **apuestas deportivas** sujeto a un sistema de **fichas virtuales** intercambiables por premios. El fin de la aplicación es aumentar el interés y participación en los eventos deportivos organizados dentro de la facultad y/o a nivel universitario.
 
 ---
 
@@ -141,7 +141,7 @@ Actualiza tanto `events` como `currentEvent` tras apostar o modificar un evento.
 
 # Mapa de rutas y flujo de autenticación
 
-La aplicación usa React Router para la navegación
+La aplicación usa React Router para la navegación.
 ### Rutas públicas
 
 * `/` → Muestra la página principal de la aplicación (`HomePage`).
@@ -149,7 +149,6 @@ La aplicación usa React Router para la navegación
 * `/login` → Formulario de inicio de sesión (`LoginPage`).
 * `/event-list` → Lista completa de eventos disponibles para apostar (`EventList`).
 * `/event-page/:id` → Vista detallada de un evento y acciones asociadas, como apostar si eres usuario, o definir un ganador si eres creador del evento (`EventPage`).
-<!-- * `/event/:eventId` → Formulario para editar un evento existente? (`EventForm`). -->
 * `/ranking` → Vista del ranking global de usuarios (`Ranking`).
 ### Rutas protegidas
 * `/me` → Página del perfil del usuario autenticado (`UserPage`).
@@ -164,7 +163,7 @@ La aplicación usa React Router para la navegación
 
   * Backend genera JWT en cookie HTTPOnly
   * Devuelve header `X-CSRF-Token`
-* Cualquier request autenticada exige:
+* Cada request autenticada pide:
 
   * Cookie con JWT
   * Header `X-CSRF-Token`
@@ -175,37 +174,42 @@ El frontend mantiene el usuario mediante `useAuthStore` y su persistencia local.
 
 ---
 
-# Descripción de los tests E2E
+# Flujos cubiertos por tests E2E 
 
-### Herramienta usada
+Se utilizó Playwright.
 
-Playwright.
+## Autenticación
 
-### Flujos cubiertos
-
-#### **Autenticación**
-
-* Registro exitoso
+* Registro de usuario
 * Login exitoso
-* Login inválido (password incorrecta)
-* Redirección a `/login` si el usuario intenta entrar a una ruta protegida estando deslogueado
+* Login inválido por contraseña incorrecta
+* Validación de campos vacíos al hacer login
+* Redirección automática a `/login` al intentar acceder a `/me` sin sesión
+* Logout y posterior bloqueo de acceso a rutas protegidas
 
-#### **Eventos**
+## Eventos
 
-* Crear evento nuevo
-* Listar eventos creados
-* Ver detalle de un evento existente
-* Editar evento
-* Eliminar evento
+* Crear un evento nuevo mediante el formulario completo
+* Listar los eventos creados en `/event-list`
+* Ver el detalle de un evento existente
 * Crear múltiples eventos y acceder a uno específico
 
-#### **Helpers implementados**
+## Helpers implementados
 
-* `loginWith`
-* `registerUser`
-* `createEvent`
+`registerUser(page, username, email, password)`: Navega a */register*, rellena los campos obligatorios y envía el formulario.
 
-Permiten escribir pruebas consistentes y reutilizables.
+`loginWith(page, username, password)`: Navega a */login*, completa usuario y contraseña, y envía el formulario.
+
+`logout(page)`: Ejecuta el logout.
+
+`createEvent(page, title)`: Rellena el formulario de creación de eventos con dos opciones y publica el evento.
+
+Para correr tests:
+```bash
+cd e2e-tests
+npm install
+npm run test
+```
 
 ---
 

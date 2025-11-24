@@ -40,6 +40,7 @@ export const useAuthStore = create<authState>()(persist((set) => ({
   logout: async () => { 
     await loginService.logout();
     set({ user: null });
+    localStorage.removeItem("auth-storage");
   },
 
   restoreLogin: async () => {

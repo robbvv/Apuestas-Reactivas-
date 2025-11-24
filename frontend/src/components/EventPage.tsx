@@ -27,6 +27,7 @@ const EventPage = () => {
 
   const event = currentEvent;
   const isOwner = user?.id === event.owner.id;
+  
 
   const stateMap = {
     open: { text: "Upcoming", color: "success" },

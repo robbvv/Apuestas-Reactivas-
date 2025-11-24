@@ -1,8 +1,8 @@
 import { test, expect } from "@playwright/test";
-import { loginWith, registerUser, createEvent } from "./helper";
+import { loginWith, registerUser, createEvent, logout } from "./helper";
 
 const baseUrl="http://localhost:5173" 
-const resetUrl="http://localhost:3000/api"
+const resetUrl="http://localhost:3001/api"
 
 test.describe("Event app", () => {
   test.beforeEach(async ({ page, request }) => {
@@ -18,14 +18,13 @@ test.describe("Event app", () => {
 
   test("login form works", async ({ page }) => {
     await loginWith(page, "bob", "pass123");
-    await expect(page.getByText("Signed in as bob")).toBeVisible();
+    await expect(page.getByText(/Welcome, bob. What would you like to do?/)).toBeVisible(); // Ahora redirige a /
   });
-
 
   test.describe("when logged in", () => {
     test.beforeEach(async ({ page }) => {
       await loginWith(page, "bob", "pass123");
-      await expect(page.getByText("Signed in as bob")).toBeVisible();
+      await expect(page.getByText(/Welcome, bob. What would you like to do?/)).toBeVisible();
     });
 
     test("a new event can be created", async ({ page }) => {
@@ -38,27 +37,6 @@ test.describe("Event app", () => {
     test.describe("and an event exists", () => {
       test.beforeEach(async ({ page }) => {
         await createEvent(page, "Single Event");
-      });
-
-      test("event can be updated", async ({ page }) => {
-        await page.goto(baseUrl+"/event-list");
-        await page.getByText("Single Event").click();
-
-        await page.getByRole("button", { name: "Edit event" }).click();
-        await page.getByPlaceholder("Type the title").fill("Updated Event");
-        await page.getByRole("button", { name: "Save changes" }).click();
-
-        await expect(page.getByText("Updated Event")).toBeVisible();
-      });
-
-      test("event can be deleted", async ({ page }) => {
-        await page.goto(baseUrl+"/event-list");
-        await page.getByText("Single Event").click();
-
-        await page.getByRole("button", { name: "Delete event" }).click();
-
-        await page.goto(baseUrl+"/event-list");
-        await expect(page.getByText("Single Event")).not.toBeVisible();
       });
     });
 
@@ -76,5 +54,4 @@ test.describe("Event app", () => {
       });
     });
   });
-
 });

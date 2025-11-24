@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, Form, Button, Alert } from "react-bootstrap"
 import userService from "../services/user";
 import { useAuthStore } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const RegisterPage = () => {
   const { user } = useAuthStore();
@@ -54,11 +55,13 @@ const RegisterPage = () => {
       setNewUsername("");
       setNewEmail("");
       setNewPassword("");
-    } catch (err: any) {
-      if (err.response?.data?.error) {
-        setErrorMessage(err.response.data.error);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        if (err.response?.data?.error) {
+          setErrorMessage(err.response.data.error);
+        }
       } else {
-        setErrorMessage("An unexpected error occurred.");
+          setErrorMessage("An unexpected error occurred.");
       }
     }
   }

@@ -53,7 +53,7 @@ const LoginPage = () => {
         <Col xs={12} md={6} lg={4}>
           <Card className="shadow-sm">
             <Card.Body>
-              <Card.Title className="mb-4 text-center">Log in</Card.Title>
+              <Card.Title className="mb-4 text-center" data-testid="login-card-title">Log in</Card.Title>
 
               {loginError && (
                 <Alert variant="danger" className="mb-3">

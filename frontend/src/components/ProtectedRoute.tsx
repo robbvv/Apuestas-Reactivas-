@@ -1,16 +1,23 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
+import { Navigate, Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useAuthStore } from "../store/authStore";
 
 const ProtectedRoute = () => {
-  // Obtenemos el usuario del estado global
-  const user = useAuthStore((state) => state.user);
+  const { user, restoreLogin } = useAuthStore();
+  const [loading, setLoading] = useState(true);
 
-  // Si no hay usuario logueado, redirigir al login
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  useEffect(() => {
+    const init = async () => {
+      await restoreLogin();  
+      setLoading(false);
+    };
+    init();
+  }, [restoreLogin]);
 
-  // Si hay usuario, renderizar el contenido de la ruta (Outlet)
+  if (loading) return null;
+
+  if (!user) return <Navigate to="/login" replace />;
+
   return <Outlet />;
 };
 

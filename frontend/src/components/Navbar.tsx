@@ -65,7 +65,7 @@ const NavigationBar = () => {
                   My Profile
                 </Nav.Link>
 
-                <Nav.Link onClick={handleLogout} className="text-danger">
+                <Nav.Link onClick={handleLogout} className="text-danger" data-testid="logout-link-navbar">
                   Log out
                 </Nav.Link>
               </>

@@ -44,7 +44,6 @@ const App = () => {
           <Route element={<ProtectedRoute />}>
             <Route path="/me" element={<UserPage />} />
             <Route path="/event-form" element={<EventForm />} />
-            <Route path="/event/:eventId" element={<EventForm />} />
           </Route>
 
           {/* Ruta por defecto (404) -> Redirigir al inicio */}

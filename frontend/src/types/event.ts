@@ -20,8 +20,8 @@ export type EventData = {
     pool: number;
     betsCount: number;
     options: EventOption[];
-    owner: Partial<UserData>; // id, username por ahora
-    participants: string[]; // ids
+    owner: Partial<UserData>;
+    participants: string[];
     status: "open" | "locked" | "resolved";
     winningOption?: string | null;
 }
