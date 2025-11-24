@@ -9,6 +9,7 @@ type EventsState = {
   getAllEvents: () => void,
   getEventById: (id: string) => void,
   placeBetOnEvent: (id: string, option: string, amount: number) => void,
+  changeBetStatus: (id: string, status: string, winningOption: string | null) => void,
 };
 
 export const useEventsStore = create<EventsState>((set) => ({
@@ -43,5 +44,18 @@ export const useEventsStore = create<EventsState>((set) => ({
     } catch {
       console.error("Error al apostar en evento de id=", id);
     }
-  }
+  },
+
+  changeBetStatus: async (id, status, winningOption) => {
+    try {
+      const updated = await eventService.changeBetStatus(id, status, winningOption);
+
+      set((state) => ({
+        events: state.events.map(e => e.id === id ? updated : e),
+        currentEvent: updated
+      }));
+    } catch {
+      console.error("Error changing status", id);
+    }
+  },
 }));

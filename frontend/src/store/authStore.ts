@@ -26,6 +26,10 @@ export const useAuthStore = create<authState>()(persist((set) => ({
 
   login: async (credentials: Credentials) => {
     try {
+      if(!credentials.username || !credentials.password){
+        set({ user: null, loginError: "All fields are required" });
+        return;
+      }
       const user = await loginService.login(credentials);
       set({ user: user, loginError: null });
     } catch {

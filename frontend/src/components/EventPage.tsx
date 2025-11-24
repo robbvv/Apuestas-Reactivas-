@@ -1,189 +1,219 @@
-import eventService from "../services/events";
-import type { EventData } from '../types/event';
-import { useState, useEffect} from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import "../styles/event-page.css";
 import { useAuthStore } from "../store/authStore";
+import { useEventsStore } from "../store/eventsStore";
+
+import { 
+  Container, Card, Button, Row, Col, Form, Alert, Badge, ListGroup, Stack
+} from "react-bootstrap";
 
 const EventPage = () => {
   const { id } = useParams();
+
   const { user, restoreLogin } = useAuthStore();
-  const [event, setEvent] = useState<EventData | null>(null);
-  const [newBetOption, setNewBetOption] = useState<string>("");
-  const [newBetAmount, setNewBetAmount] = useState<number>(0);
-  const [winningOption, setWinningOption] = useState<string>("");
-  
+  const { currentEvent, getEventById, placeBetOnEvent, changeBetStatus } = useEventsStore();
+
+  const [newBetOption, setNewBetOption] = useState("");
+  const [newBetAmount, setNewBetAmount] = useState(0);
+  const [winningOption, setWinningOption] = useState("");
+
   useEffect(() => {
-    const fetchEvent = async () => {
-      if (!id) return;
-      const data = await eventService.getById(id);
-      setEvent(data);
-      setNewBetAmount(data.minBet)
+    if (!id) return;
+    restoreLogin();
+    getEventById(id);
+  }, [id]);
 
-      restoreLogin();
-    };
-    fetchEvent();
-  }, [id, user])
+  if (!currentEvent) return <p>Loading event...</p>;
 
-  const isOwner = user?.id === event?.owner.id;
+  const event = currentEvent;
+  const isOwner = user?.id === event.owner.id;
 
-  if (!event) return (<p>LOADING USER</p>)
+  const stateMap = {
+    open: { text: "Upcoming", color: "success" },
+    locked: { text: "In Progress", color: "warning" },
+    resolved: { text: "Finished", color: "danger" }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!id) return;
-    const updatedEvent = await eventService.betOnEvent(id, newBetOption, newBetAmount);
-    setEvent(updatedEvent);
+    if (!id || !newBetOption || newBetAmount <= 0) return;
+
+    await placeBetOnEvent(id, newBetOption, newBetAmount);
+
     setNewBetOption("");
     setNewBetAmount(event.minBet);
   };
 
-  const handleBetOptionChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setNewBetOption(event.target.value);
-  };
-
-  const handleBetAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewBetAmount(Number(event.target.value));
-  };
-
   const handleLockEvent = async () => {
     if (!id) return;
-    const updated = await eventService.changeBetStatus(id, "locked", null);
-    setEvent(updated);
+    await changeBetStatus(id, "locked", null);
+    getEventById(id);
   };
 
   const handleResolveEvent = async () => {
     if (!id || !winningOption) return;
-    const updated = await eventService.changeBetStatus(id, "resolved", winningOption);
-    setEvent(updated);
-    setWinningOption("");
+    await changeBetStatus(id, "resolved", winningOption);
+    getEventById(id);
   };
 
-  const stateText = event.status === "open" ? "upcoming" : event.status === "locked" ? "in progress" : "finished";
-  const stateColor = event.status === "open" ? "green" : event.status === "locked" ? "yellow" : "red";
   return (
-  <div className="event-item">
-    <div className="event-title">
-      <b>{event.title}</b>
-    </div>
-    <div className="event-details">
-      Sport: {event.sport} | Organizer: {event.organizer}
-    </div>
-    <div>
-      Last Updated: {event.updatedAt ? new Date(event.updatedAt).toLocaleString() : "-"} | Created: {new Date(event.createdAt).toLocaleString()}
-    </div>
-    <div className="event-description">
-      {event.description}
-    </div>
-    <div className="event-details2">
-      Location: {event.location}
-    </div>
-    <div className="event-stats">
-      Stars: [{event.stars}] | Pool: [{event.pool}] | Gamblers: [{event.betsCount}]
-    </div>
-    <div className="event-stats2">
-      State: <span style={{ color: stateColor }}>{stateText}</span> {new Date(event.date).toLocaleString()}
-    </div>
-    {!user && (
-      <div className="event-bet-form-container">
-        <label> Options: 
-          <select value={newBetOption} onChange={handleBetOptionChange}>
-            <option value="">-- Options of the bet --</option>
-            {event.options.map((opt) => (
-              <option key={opt.name} value={opt.name}>
-                {opt.name} (payout: {opt.payout})
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-    )}
-    {user && !isOwner && (
-      <div>
-        {event.status === "open" && ( 
-          <div className="event-bet-form-container">
-            <form className="event-bet-form" onSubmit={handleSubmit}>
-              <label> Options: 
-                <select value={newBetOption} onChange={handleBetOptionChange}>
-                  <option value="">-- Select an option --</option>
-                  {event.options.map((opt) => (
-                    <option key={opt.name} value={opt.name}>
-                      {opt.name} (payout: {opt.payout})
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label> Your bet: <input 
-                type="number" 
-                min={event.minBet}
-                value={newBetAmount}
-                placeholder="Type your bet"
-                onChange={handleBetAmountChange}
-                />
-              </label>
-              <button type="submit">Bet</button>
-            </form>
-          </div>
-        )}
-        {event.status === "locked" && (
-          <div className="locked-message">
-            <h3>Betting Closed</h3>
-            <p>This event is now <strong>locked</strong>. No more bets can be placed.</p>
-            <p>Stay tuned! The organizer will announce the winner soon.</p>
-          </div>
-        )}
-        {event.status === "resolved" && (
-          <div className="resolved-message">
-            <h3>🏆 Winner</h3>
-            <p>The winning option is: <strong>{event.winningOption}</strong></p>
-          </div>
-        )}
-      </div>
-    )}
-    {user && isOwner && (
-      <div>
-        <h3>Owner settings:</h3>
+    <Container className="py-4">
+      <Card className="shadow-lg p-3">
+        <Card.Body>
+          <Card.Title className="fs-2 fw-bold">{event.title}</Card.Title>
 
-        {event.status === "open" && (
-          <div>
-            <p>Betting is currently <strong>open</strong> — users can still place bets.</p>
-            <p>If you're ready to stop new bets:</p>
-            <button onClick={handleLockEvent}>Lock betting</button>
-          </div>
-        )}
+          <Stack direction="horizontal" gap={3} className="mb-3">
+            <span><strong>Sport:</strong> {event.sport}</span>
+            <span><strong>Organizer:</strong> {event.organizer}</span>
+            <Badge bg={stateMap[event.status].color}>
+              {stateMap[event.status].text}
+            </Badge>
+          </Stack>
 
-        {event.status === "locked" && (
-          <div>
-            <p>Betting is <strong>locked</strong> — no more bets allowed.</p>
-            <p>Once you know the result, select a winner:</p>
-            <select
-              value={winningOption}
-              onChange={(e) => setWinningOption(e.target.value)}
-            >
-              <option value="">-- Choose a winner --</option>
-              {event.options.map((opt) => (
-                <option key={opt.name} value={opt.name}>
-                  {opt.name}
-                </option>
-              ))}
-            </select>
+          <Card.Text>{event.description}</Card.Text>
 
-            <button disabled={!winningOption} onClick={handleResolveEvent}>
-              Resolve event
-            </button>
-          </div>
-        )}
+          <ListGroup className="mb-3">
+            <ListGroup.Item>Stars: {event.stars}</ListGroup.Item>
+            <ListGroup.Item>Prize Pool: {event.pool}</ListGroup.Item>
+            <ListGroup.Item>Participants: {event.betsCount}</ListGroup.Item>
+          </ListGroup>
 
-        {event.status === "resolved" && (
-          <div>
-            <p>This bet has been <strong>resolved</strong>.</p>
-            <p>The winner was: {event.winningOption}</p>
-            <p>Nothing else to manage here</p>
-          </div>
-        )}
-      </div>
-    )}
-  </div>
-)};
+          <p><strong>Location:</strong> {event.location}</p>
+          <p><strong>Date:</strong> {new Date(event.date).toLocaleString()}</p>
+
+          {/* VISITOR MESSAGES */}
+          {!user && (
+            <>
+              {event.status === "open" && (
+                <Alert variant="primary" className="mt-3">
+                  Betting is <strong>open</strong>.  
+                  Log in to place a bet.
+                </Alert>
+              )}
+
+              {event.status === "locked" && (
+                <Alert variant="warning" className="mt-3">
+                  This event is <strong>locked</strong>.  
+                  No more bets can be made.
+                </Alert>
+              )}
+
+              {event.status === "resolved" && (
+                <Alert variant="success" className="mt-3">
+                  Event finished. Winner:  
+                  <strong> {event.winningOption}</strong>.
+                </Alert>
+              )}
+            </>
+          )}
+
+          {/* USER BETTING SECTION */}
+          {user && !isOwner && (
+            <>
+              {event.status === "open" && (
+                <Form onSubmit={handleSubmit} className="mt-3">
+                  <Row className="g-2">
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label>Bet options</Form.Label>
+                        <Form.Select 
+                          value={newBetOption}
+                          onChange={(e) => setNewBetOption(e.target.value)}
+                        >
+                          <option value="">-- Select an option --</option>
+                          {event.options.map(opt => (
+                            <option key={opt.name} value={opt.name}>
+                              {opt.name} (payout: {opt.payout})
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={4}>
+                      <Form.Group>
+                        <Form.Label>Your bet</Form.Label>
+                        <Form.Control 
+                          type="number"
+                          min={event.minBet}
+                          value={newBetAmount}
+                          onChange={(e) => setNewBetAmount(Number(e.target.value))}
+                        />
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={2} className="d-flex align-items-end">
+                      <Button type="submit" className="w-100">Place Bet</Button>
+                    </Col>
+                  </Row>
+                </Form>
+              )}
+
+              {event.status === "locked" && (
+                <Alert variant="warning" className="mt-3">
+                  <strong>Betting closed.</strong>
+                </Alert>
+              )}
+
+              {event.status === "resolved" && (
+                <Alert variant="success" className="mt-3">
+                  <strong>Winner:</strong> {event.winningOption}
+                </Alert>
+              )}
+            </>
+          )}
+
+          {/* OWNER PANEL */}
+          {user && isOwner && (
+            <div className="mt-4">
+              <h4>Organizer Panel</h4>
+
+              {event.status === "open" && (
+                <>
+                  <Alert variant="success">Betting is open.</Alert>
+                  <Button variant="warning" onClick={handleLockEvent}>
+                    Lock Betting
+                  </Button>
+                </>
+              )}
+
+              {event.status === "locked" && (
+                <>
+                  <Alert variant="warning">
+                    Betting locked. Select the winning option.
+                  </Alert>
+                  <Form.Select 
+                    className="my-2"
+                    value={winningOption}
+                    onChange={e => setWinningOption(e.target.value)}
+                  >
+                    <option value="">-- Choose a winner --</option>
+                    {event.options.map(opt => (
+                      <option key={opt.name} value={opt.name}>{opt.name}</option>
+                    ))}
+                  </Form.Select>
+                  <Button 
+                    variant="success"
+                    disabled={!winningOption}
+                    onClick={handleResolveEvent}
+                  >
+                    Resolve Event
+                  </Button>
+                </>
+              )}
+
+              {event.status === "resolved" && (
+                <Alert variant="info">
+                  Event resolved.  
+                  Winner: <strong>{event.winningOption}</strong>.
+                </Alert>
+              )}
+            </div>
+          )}
+        </Card.Body>
+      </Card>
+    </Container>
+  );
+};
 
 export default EventPage;

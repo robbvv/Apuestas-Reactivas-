@@ -116,7 +116,7 @@ const RegisterPage = () => {
                 </Form.Group>
 
                 <div className="d-grid">
-                  <Button type="submit" variant="primary">
+                  <Button name="Register" type="submit" variant="primary">
                     Register
                   </Button>
                 </div>

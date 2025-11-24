@@ -83,7 +83,7 @@ const LoginPage = () => {
                 </Form.Group>
 
                 <div className="d-grid">
-                  <Button type="submit" variant="primary">
+                  <Button name="Log in" type="submit" variant="primary">
                     Log in
                   </Button>
                 </div>

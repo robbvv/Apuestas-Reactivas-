@@ -1,27 +1,34 @@
-# Proyecto: Apuestas Reactivas  (Reactive Bets)
+
+# Proyecto: Apuestas Reactivas (Reactive Gambling)
+
+Apuestas Reactivas es una aplicación web de **apuestas deportivas** sujeto a un sistema de **fichas virtuales** intercambiables por premios. El fin de la aplicación es aumentar el interés y participación en los eventos deportivos organizados dentro de la facultad y/o a nivel universitario.
+
+---
 
 ## Integrantes:
-- Agustín Andrés Verdugo Bustos
-- Joaquín Antonio Cornejo Morales
-- Nelson Alejandro Navarro Barría
-- Roberto Ulises Vega Vega
+
+* Agustín Andrés Verdugo Bustos
+* Joaquín Antonio Cornejo Morales
+* Nelson Alejandro Navarro Barría
+* Roberto Ulises Vega Vega
 
 ## Variables de entorno requeridas
 
-El proyecto requiere ciertas variables de entorno para ejecutarse correctamente.  
+El proyecto requiere ciertas variables de entorno para ejecutarse correctamente.
 Un ejemplo se encuentra en el archivo [`env.example`](./env.example).
 
 Puedes configurarlas de una de las siguientes formas:
 
-1. **Renombrar** el archivo `env.example` a `.env`, o  
+1. **Renombrar** el archivo `env.example` a `.env`, o
 2. **Crear un nuevo archivo** llamado `.env` y **copiar** en él el contenido de `env.example`.
 
-
 ## Instalación y ejecución en modo desarrollo
+
 Se ejecuta en dos terminales distintas los siguientes pasos:
 
 ### Levantar el backend
-Inicia el server en http://localhost:3001
+
+Inicia el server en [http://localhost:3001](http://localhost:3001)
 
 Nota: npm install solo se hace la primera vez que se clona el repositorio
 
@@ -32,40 +39,48 @@ npm run dev
 ```
 
 ### Levantar el frontend
-Inicia app en http://localhost:5173
+
+Inicia app en [http://localhost:5173](http://localhost:5173)
 
 Nota: npm install solo se hace la primera vez que se clona el repositorio
+
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-
 ## Instalación y ejecución en modo producción
+
 Se ejecuta en dos terminales distintas los siguientes pasos:
 
 ### Build frontend
+
 Nota: npm install solo se hace la primera vez que se clona el repositorio
+
 ```bash
 cd frontend
 npm install
 npm run build
 ```
+
 Luego copiar la carpeta dist al backend:
 
 Windows:
+
 ```bash
 Copy-Item -Recurse -Force dist ../backend/dist
 ```
 
 macOS/Linux:
+
 ```bash
 cp -r dist ../backend/dist   # En macOS/Linux
 ```
 
 ### Build backend y levantar la app
-Inicia la app en http://localhost:3001
+
+Inicia la app en [http://localhost:3001](http://localhost:3001)
 
 Nota: npm install solo se hace la primera vez que se clona el repositorio
 
@@ -77,9 +92,11 @@ npm run start
 ```
 
 ### (Opcional para macOS/Linux)
+
 Iniciar directamente todo
 
 Nota: npm install solo se hace la primera vez que se clona el repositorio
+
 ```bash
 cd frontend
 npm install
@@ -90,3 +107,102 @@ cd backend
 npm install
 npm run build:ui
 ```
+
+---
+
+# Estructura del estado global
+
+### Librería usada: *Zustand*
+
+### Stores implementados
+
+#### **useAuthStore:**
+
+* Usuario autenticado (`user: UserData | null`)
+* Mensaje de error de login (`loginError: string | null`)
+* Iniciar sesión: `login(credentials)`
+* Cerrar sesión: `logout()`
+* Restaurar sesión: `restoreLogin()`
+* Borrar mensaje de error: `clearError()`
+
+Mantiene la sesión activa al refrescar la página gracias a `persist({ name: "auth-storage" })`
+
+#### **useEventsStore:**
+
+* Lista global de eventos (`events: EventData[]`)
+* Evento actual (`currentEvent: EventData | null`)
+* Obtener todos los eventos: `getAllEvents()`
+* Obtener un evento único por id: `getEventById(id)`
+* Apostar sobre una opción en un evento: `placeBetOnEvent(id, option, amount)`
+
+Actualiza tanto `events` como `currentEvent` tras apostar o modificar un evento.
+
+---
+
+# Mapa de rutas y flujo de autenticación
+
+### Rutas principales
+
+* `/` → Muestra la página principal de la aplicación (`HomePage`).
+* `/register` → Formulario de registro de nuevos usuarios (`RegisterPage`).
+* `/login` → Formulario de inicio de sesión (`LoginPage`).
+* `/me` → Página del perfil del usuario autenticado (`UserPage`).
+* `/event-form` → Formulario para crear un nuevo evento (`EventForm`).
+* `/event-list` → Lista completa de eventos disponibles para apostar (`EventList`).
+* `/event-page/:id` → Vista detallada de un evento y acciones asociadas, como apostar si eres usuario, o definir un ganador si eres creador del evento (`EventPage`).
+<!-- * `/event/:eventId` → Formulario para editar un evento existente? (`EventForm`). -->
+* `/ranking` → Vista del ranking global de usuarios (`Ranking`).
+
+### Flujo de autenticación
+
+* Registro: POST `/api/users`
+* Login: POST `/api/login`
+
+  * Backend genera JWT en cookie HTTPOnly
+  * Devuelve header `X-CSRF-Token`
+* Cualquier request autenticada exige:
+
+  * Cookie con JWT
+  * Header `X-CSRF-Token`
+* `GET /api/login/me` permite restaurar sesión
+* Logout: POST `/api/login/logout` limpia la cookie
+
+El frontend mantiene el usuario mediante `useAuthStore` y su persistencia local.
+
+---
+
+# Descripción de los tests E2E
+
+### Herramienta usada
+
+Playwright.
+
+### Flujos cubiertos
+
+#### **Autenticación**
+
+* Registro exitoso
+* Login exitoso
+* Login inválido (password incorrecta)
+* Redirección a `/login` si el usuario intenta entrar a una ruta protegida estando deslogueado
+
+#### **Eventos**
+
+* Crear evento nuevo
+* Listar eventos creados
+* Ver detalle de un evento existente
+* Editar evento
+* Eliminar evento
+* Crear múltiples eventos y acceder a uno específico
+
+#### **Helpers implementados**
+
+* `loginWith`
+* `registerUser`
+* `createEvent`
+
+Permiten escribir pruebas consistentes y reutilizables.
+
+---
+
+# Librería de estilos utilizada y decisiones de diseño

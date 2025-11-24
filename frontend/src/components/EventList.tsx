@@ -61,9 +61,9 @@ const EventList = () => {
         )}
 
         {filteredEvents.map((event) => {
-          const isUpcoming = new Date(event.date) > new Date();
-          const stateText = isUpcoming ? "upcoming" : "finished";
-          const stateVariant = isUpcoming ? "success" : "secondary";
+          const s = event.status
+          const stateText = s === "open" ? "upcoming" : s === "locked"? "in progress" : "finished";
+          const stateVariant = s === "open" ? "success" : s === "locked"? "warning" : "secondary";
 
           return (
             <Col key={event.id} xs={12} md={6} lg={4}>

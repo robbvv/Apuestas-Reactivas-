@@ -3,6 +3,7 @@ import express, { NextFunction, Request, Response } from "express";
 import config from "./utils/config";
 import loginRouter from "./controllers/login"
 import usersRouter from "./controllers/user"
+import testingRouter from "./controllers/testing"
 import middleware from "./utils/middleware";
 import betsRouter from "./controllers/bet"
 import cookieParser from "cookie-parser";
@@ -20,6 +21,10 @@ app.use("/api/bets", betsRouter)
 
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
+
+if (process.env.NODE_ENV !== "production") {
+  app.use("/api/testing", testingRouter);
+}
 
 mongoose.set("strictQuery", false);
 
