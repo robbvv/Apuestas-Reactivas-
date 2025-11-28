@@ -46,12 +46,12 @@ const betSchema = new Schema<IBet>({
   options: { type: [optionSchema], required: true },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "ApuestasReactivasUser",
   },
   participants: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "ApuestasReactivasUser",
     },
   ],
   status: { type: String, enum: ["open", "locked", "resolved"], default: "open" },
@@ -73,6 +73,6 @@ betSchema.set("toJSON", {
   }
 });
 
-const Bet = mongoose.model<IBet>("Bet", betSchema);
+const Bet = mongoose.model<IBet>("ApuestasReactivasBet", betSchema);
 
 export default Bet;

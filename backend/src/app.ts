@@ -1,6 +1,7 @@
 import mongoose from "mongoose"
 import express, { NextFunction, Request, Response } from "express";
 import config from "./utils/config";
+import path from "path"
 import loginRouter from "./controllers/login"
 import usersRouter from "./controllers/user"
 import testingRouter from "./controllers/testing"
@@ -18,6 +19,18 @@ app.use(middleware.requestLogger);
 app.use("/api/login", loginRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/bets", betsRouter);
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  if (req.path.startsWith("/api")) {
+    return next();
+  }
+
+  if (req.method !== "GET") {
+    return next();
+  }
+
+  res.sendFile(path.resolve("dist", "index.html"));
+});
 
 if (process.env.NODE_ENV !== "production") {
   app.use("/api/testing", testingRouter);

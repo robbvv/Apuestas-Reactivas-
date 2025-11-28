@@ -33,14 +33,14 @@ const userSchema = new Schema<IUser>({
   ownBets: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Bet",
+      ref: "ApuestasReactivasBet",
       default: []
     },
   ], 
   coins: { type: Number, default: 1000 }
 });
 
-const User  = mongoose.model<IUser>("User", userSchema);
+const User  = mongoose.model<IUser>("ApuestasReactivasUser", userSchema);
 
 userSchema.set("toJSON", {
   transform: (

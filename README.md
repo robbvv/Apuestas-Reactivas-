@@ -226,5 +226,16 @@ Sobre las decisiones de diseño, se decidió implementar la aplicación tal que 
 
 * Interacción: Casi todos los componentes de React Bootstrap tienen interacciones que mejoran la experiencia, por ejemplo, hover del mouse sobre un botón y este cambia de color, rutas se resaltan en la barra de navegación.
 
-# URL aplicación
+# Deployment
+Lo que se hizo fue:
+- Compilar backend en backend/out
+- Compilar frontend en backend/dist
+- Cambiar algunos nombres de modelos para no ocupar los mismos de otros grupos(Ej: User -> ApuestasReactivasUser)
+- Backend redirige todo lo que no tenga "/api" al frontend(react router se encarga)
+- Subir al servidor en directorio de ApuestasReactivas/
+- Crear archivo .env dentro de /ApuestasReactivas/backend con las variables de ambiente
+- Instalar dependencias
+- Utilizando screen, dejar el backend corriendo en segundo plano
+
+# [URL aplicación](https://fullstack.dcc.uchile.cl:7102)
 
